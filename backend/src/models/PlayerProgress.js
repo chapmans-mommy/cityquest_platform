@@ -83,6 +83,29 @@ class PlayerProgress {
     const result = await pool.query(query, [id]);
     return result.rows[0].pause_count_used;
   }
+
+  static async addPause(id) {
+    const query = `
+      UPDATE player_progress
+      SET pause_count_used = pause_count_used + 1
+      WHERE id = $1
+      RETURNING pause_count_used
+    `;
+    const result = await pool.query(query, [id]);
+    return result.rows[0].pause_count_used;
+  }
+  
+  static async togglePause(id, isPaused) {
+    const query = `
+      UPDATE player_progress
+      SET status = $1
+      WHERE id = $2
+      RETURNING status
+    `;
+    const newStatus = isPaused ? 'paused' : 'in_progress';
+    const result = await pool.query(query, [newStatus, id]);
+    return result.rows[0].status;
+  }
 }
 
 module.exports = PlayerProgress;

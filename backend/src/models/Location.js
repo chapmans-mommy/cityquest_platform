@@ -78,6 +78,11 @@ class Location {
     const result = await pool.query(query, [questId]);
     return result.rows[0].next_order;
   }
+  static async findById(id) {
+    const query = 'SELECT * FROM locations WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
+  }
 }
 
 module.exports = Location;
