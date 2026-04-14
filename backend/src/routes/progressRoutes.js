@@ -1,5 +1,5 @@
 const express = require('express');
-const { startQuest, checkLocation, abortQuest } = require('../controllers/progressController');
+const { startQuest, checkLocation, abortQuest, pauseQuest, resumeQuest } = require('../controllers/progressController');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -43,6 +43,24 @@ router.post('/progress/:progressId/check-location', protect, checkLocation);
  */
 router.post('/progress/:progressId/abort', protect, abortQuest);
 
+/**
+ * POST /api/progress/{progressId}/pause
+ * @summary Поставить квест на паузу (максимум 2 раза)
+ * @tags Progress
+ * @security BearerAuth
+ * @param {string} progressId.path.required - ID прогресса
+ * @return {object} 200 - сообщение о паузе
+ */
+router.post('/progress/:progressId/pause', protect, pauseQuest);
 
+/**
+ * POST /api/progress/{progressId}/resume
+ * @summary Возобновить квест после паузы
+ * @tags Progress
+ * @security BearerAuth
+ * @param {string} progressId.path.required - ID прогресса
+ * @return {object} 200 - сообщение о возобновлении
+ */
+router.post('/progress/:progressId/resume', protect, resumeQuest);
 
 module.exports = router;
