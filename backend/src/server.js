@@ -14,6 +14,7 @@ const questRoutes = require('./routes/questRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/api', ratingRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/quests', questRoutes);
 app.use('/api', reviewRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Server is running' });
