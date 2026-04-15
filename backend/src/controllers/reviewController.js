@@ -1,3 +1,4 @@
+const pool = require('../db');
 const Review = require('../models/Review');
 const PlayerProgress = require('../models/PlayerProgress');
 

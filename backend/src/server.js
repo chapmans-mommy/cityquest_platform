@@ -13,6 +13,7 @@ const logAction = require('./middleware/logMiddleware');
 const questRoutes = require('./routes/questRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/api', progressRoutes);
 app.use('/api', ratingRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/quests', questRoutes);
+app.use('/api', reviewRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Server is running' });

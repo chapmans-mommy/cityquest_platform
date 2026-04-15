@@ -52,6 +52,48 @@ class Achievement {
     
     return insertResult.rows[0];
   }
+
+  static async checkAndGrantAll(userId) {
+    // Получаем статистику пользователя
+    const userQuery = 'SELECT total_points FROM users WHERE id = $1';
+    const userResult = await pool.query(userQuery, [userId]);
+    const totalPoints = userResult.rows[0].total_points;
+    
+    // Считаем количество пройденных квестов
+    const questsQuery = `
+      SELECT COUNT(*) as count 
+      FROM player_progress 
+      WHERE user_id = $1 AND status = 'completed'
+    `;
+    const questsResult = await pool.query(questsQuery, [userId]);
+    const completedQuests = parseInt(questsResult.rows[0].count);
+    
+    // Получаем все достижения
+    const achievements = await Achievement.findAll();
+    
+    // Получаем уже выданные достижения
+    const userAchievements = await Achievement.findByUserId(userId);
+    const earnedIds = userAchievements.map(a => a.id);
+    
+    const newlyGranted = [];
+    
+    for (const ach of achievements) {
+      if (earnedIds.includes(ach.id)) continue;
+      
+      let conditionMet = false;
+      if (ach.condition_type === 'total_points') {
+        conditionMet = totalPoints >= parseInt(ach.condition_value);
+      } else if (ach.condition_type === 'quests_completed') {
+        conditionMet = completedQuests >= parseInt(ach.condition_value);
+      }
+      
+      if (conditionMet) {
+        await Achievement.grant(userId, ach.id);
+        newlyGranted.push(ach.name);
+      }
+    }
+    return newlyGranted;
+  }
 }
 
 module.exports = Achievement;

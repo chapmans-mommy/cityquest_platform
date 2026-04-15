@@ -76,106 +76,107 @@ const startQuest = async (req, res) => {
 };
 
 const checkLocation = async (req, res) => {
-  try {
-    const { progressId } = req.params;
-    const { locationId, latitude, longitude } = req.body;
-    
-    // Получаем прогресс
-    const progress = await PlayerProgress.findById(parseInt(progressId));
-    if (!progress) {
-      return res.status(404).json({ error: 'Прогресс не найден' });
-    }
-    if (progress.user_id !== req.user.id) {
-      return res.status(403).json({ error: 'Это не ваш прогресс' });
-    }
-    if (progress.status !== 'in_progress') {
-      return res.status(400).json({ error: 'Квест уже завершён или прерван' });
-    }
-    
-    // Проверка, не отмечена ли уже эта локация
-    const alreadyChecked = await LocationCheck.isLocationChecked(parseInt(progressId), parseInt(locationId));
-    if (alreadyChecked) {
-      return res.status(400).json({ error: 'Эта локация уже отмечена' });
-    }
-    
-    // Получаем данные локации
-    const location = await Location.findById(parseInt(locationId));
-    if (!location) {
-      return res.status(404).json({ error: 'Локация не найдена' });
-    }
-    
-    // GPS проверка
-    const distance = getDistance(latitude, longitude, location.latitude, location.longitude);
-    if (distance > 100) {
-      return res.status(400).json({ error: `Вы слишком далеко от локации (${Math.round(distance)} м). Нужно быть в радиусе 100 м.` });
-    }
-    
-    // Расчёт очков с учётом сложности
-    const multiplier = difficultySettings[progress.chosen_difficulty].pointsMultiplier;
-    let pointsEarned = location.points_award * multiplier;
-    
-    // Создание отметки
-    await LocationCheck.create({
-      progress_id: parseInt(progressId),
-      location_id: parseInt(locationId),
-      verification_method: 'gps',
-      hints_used_count: 0,
-      time_spent_seconds: 0
-    });
-    
-    // Обновление очков в прогрессе
-    const newTotalPoints = await PlayerProgress.updatePoints(parseInt(progressId), pointsEarned);
-    
-    // Получаем все локации квеста
-    const allLocations = await Location.findByQuestId(location.quest_id);
-    const checkedLocations = await LocationCheck.findByProgressId(parseInt(progressId));
-    
-    // Проверка, последняя ли локация
-    if (checkedLocations.length === allLocations.length) {
-      // Завершение квеста
-      await PlayerProgress.complete(parseInt(progressId), newTotalPoints);
+    try {
+      const { progressId } = req.params;
+      const { locationId, latitude, longitude } = req.body;
       
-      // Обновление общего счёта пользователя
-      await User.updateTotalPoints(progress.user_id, pointsEarned);
-      
-      // Проверка достижений (упрощённо)
-      const achievements = await Achievement.findAll();
-      const userAchievements = await Achievement.findByUserId(progress.user_id);
-      const earnedAchievements = [];
-      
-      for (const ach of achievements) {
-        const alreadyHas = userAchievements.some(ua => ua.id === ach.id);
-        if (!alreadyHas) {
-          if (ach.condition_type === 'total_points' && newTotalPoints >= parseInt(ach.condition_value)) {
-            await Achievement.grant(progress.user_id, ach.id);
-            earnedAchievements.push(ach.name);
-          }
-        }
+      // Получаем прогресс
+      const progress = await PlayerProgress.findById(parseInt(progressId));
+      if (!progress) {
+        return res.status(404).json({ error: 'Прогресс не найден' });
+      }
+      if (progress.user_id !== req.user.id) {
+        return res.status(403).json({ error: 'Это не ваш прогресс' });
+      }
+      if (progress.status !== 'in_progress') {
+        return res.status(400).json({ error: 'Квест уже завершён или прерван' });
       }
       
-      return res.json({
-        message: 'Квест завершён!',
-        totalPoints: newTotalPoints,
-        earnedAchievements,
-        completed: true
+      // Проверка, не отмечена ли уже эта локация
+      const alreadyChecked = await LocationCheck.isLocationChecked(parseInt(progressId), parseInt(locationId));
+      if (alreadyChecked) {
+        return res.status(400).json({ error: 'Эта локация уже отмечена' });
+      }
+      
+      // Получаем данные локации
+      const location = await Location.findById(parseInt(locationId));
+      if (!location) {
+        return res.status(404).json({ error: 'Локация не найдена' });
+      }
+      
+      // GPS проверка
+      const distance = getDistance(latitude, longitude, location.latitude, location.longitude);
+      if (distance > 100) {
+        return res.status(400).json({ error: `Вы слишком далеко от локации (${Math.round(distance)} м). Нужно быть в радиусе 100 м.` });
+      }
+      
+      // Расчёт очков с учётом сложности и времени
+      const multiplier = difficultySettings[progress.chosen_difficulty].pointsMultiplier;
+      const timeLimit = difficultySettings[progress.chosen_difficulty].timeLimit;
+      const { time_spent_seconds = 0 } = req.body;
+  
+      let pointsEarned = location.points_award * multiplier;
+  
+      if (timeLimit && time_spent_seconds > timeLimit) {
+        if (progress.chosen_difficulty === 'medium') {
+          pointsEarned = Math.floor(pointsEarned * 0.5); // штраф 50%
+        } else if (progress.chosen_difficulty === 'hard') {
+          pointsEarned = 0; // очки не начисляются
+        }
+      }
+  
+      // Создание отметки с учётом таймера
+      await LocationCheck.createWithTimer({
+        progress_id: parseInt(progressId),
+        location_id: parseInt(locationId),
+        verification_method: 'gps',
+        hints_used_count: 0,
+        time_spent_seconds: time_spent_seconds,
+        time_limit_seconds: timeLimit || 0
       });
+      
+      // Обновление очков в прогрессе
+      const newTotalPoints = await PlayerProgress.updatePoints(parseInt(progressId), pointsEarned);
+      
+      // Получаем все локации квеста
+      const allLocations = await Location.findByQuestId(location.quest_id);
+      const checkedLocations = await LocationCheck.findByProgressId(parseInt(progressId));
+      
+      // Проверка, последняя ли локация
+      if (checkedLocations.length === allLocations.length) {
+        // Завершение квеста
+        await PlayerProgress.complete(parseInt(progressId), newTotalPoints);
+        
+        // Обновление общего счёта пользователя
+        await User.updateTotalPoints(progress.user_id, pointsEarned);
+        
+        // Проверка достижений
+        const newAchievements = await Achievement.checkAndGrantAll(progress.user_id);
+        console.log('DEBUG: Достижения после проверки:', newAchievements);
+  
+        return res.json({
+          message: 'Квест завершён!',
+          totalPoints: newTotalPoints,
+          earnedAchievements: newAchievements,
+          completed: true,
+        });
+      }
+      
+      // Получаем следующую локацию
+      const nextLocation = allLocations.find(l => l.order_number === checkedLocations.length + 1);
+      
+      res.json({
+        message: 'Локация отмечена!',
+        pointsEarned,
+        totalPoints: newTotalPoints,
+        nextLocation,
+        completed: false
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
     }
-    
-    // Получаем следующую локацию
-    const nextLocation = allLocations.find(l => l.order_number === checkedLocations.length + 1);
-    
-    res.json({
-      message: 'Локация отмечена!',
-      pointsEarned,
-      totalPoints: newTotalPoints,
-      nextLocation,
-      completed: false
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
-};
+  };
 
 const abortQuest = async (req, res) => {
   try {
