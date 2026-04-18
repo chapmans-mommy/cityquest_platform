@@ -33,6 +33,7 @@ export const questsAPI = {
     addLocation: (questId, data) => api.post(`/quests/${questId}/locations`, data),
     deleteLocation: (locationId) => api.delete(`/locations/${locationId}`),
     publish: (questId) => api.post(`/quests/${questId}/publish`),
+    reorderLocations: (questId, locations) => api.put(`/quests/${questId}/locations/reorder`, { locations }),
 };
 
 export const leaderboardAPI = {
@@ -53,4 +54,6 @@ export const userAPI = {
     getLogs: () => api.get('/admin/logs'),
   };
 
+
+  
 export default api;

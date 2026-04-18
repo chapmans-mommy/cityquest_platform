@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 const QuestCard = ({ quest }) => {
   const navigate = useNavigate();
   
-  // Функция для отображения звёзд рейтинга
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -43,8 +42,11 @@ const QuestCard = ({ quest }) => {
       <p style={{ color: '#666', fontSize: '14px', margin: '0 0 8px 0' }}>
         {quest.description?.substring(0, 100)}...
       </p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <span style={{ color: '#f5a623' }}>{renderStars(quest.avg_rating || 0)}</span>
+        <span style={{ fontSize: '12px', color: '#999' }}> Количество локаций: {quest.locations_count || quest.locations?.length || 0}</span>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: '12px', color: '#999' }}>Автор: {quest.author_name}</span>
       </div>
     </div>

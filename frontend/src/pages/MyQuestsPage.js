@@ -52,7 +52,7 @@ const MyQuestsPage = () => {
         quests.map(quest => (
           <div 
             key={quest.id}
-            onClick={() => navigate(`/quest/${quest.id}/edit`)}
+            onClick={() => navigate(`/quest/${quest.id}`)}
             style={{ 
               border: '1px solid #ddd', 
               borderRadius: '8px', 

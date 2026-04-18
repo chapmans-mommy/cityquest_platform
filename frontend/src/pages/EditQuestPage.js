@@ -1,7 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { questsAPI } from '../services/api';
 import QuestMap from '../components/QuestMap';
+
+// Компонент для перетаскиваемой локации
+const SortableLocation = ({ location, onDelete }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: location.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    border: '1px solid #ddd',
+    padding: '12px',
+    marginBottom: '10px',
+    borderRadius: '8px',
+    backgroundColor: isDragging ? '#e3f2fd' : 'white',
+    cursor: 'grab',
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <strong>{location.order_number}. {location.name}</strong>
+          <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
+            {location.latitude}, {location.longitude} | Очки: {location.points_award}
+          </p>
+        </div>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(location.id);
+          }}
+          style={{ background: '#ff4444', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer' }}
+        >
+          Удалить
+        </button>
+      </div>
+      <div style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
+        ⋮⋮⋮ Перетащите для изменения порядка
+      </div>
+    </div>
+  );
+};
 
 const EditQuestPage = () => {
   const { id } = useParams();
@@ -9,8 +74,8 @@ const EditQuestPage = () => {
   const [quest, setQuest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [locations, setLocations] = useState([]);
   
-  // Форма для новой локации
   const [newLocation, setNewLocation] = useState({
     name: '',
     description: '',
@@ -20,6 +85,13 @@ const EditQuestPage = () => {
     hint_text: ''
   });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   useEffect(() => {
     loadQuest();
   }, [id]);
@@ -28,6 +100,7 @@ const EditQuestPage = () => {
     try {
       const res = await questsAPI.getById(id);
       setQuest(res.data);
+      setLocations(res.data.locations || []);
     } catch (err) {
       console.error('Ошибка загрузки квеста:', err);
       navigate('/my-quests');
@@ -54,7 +127,6 @@ const EditQuestPage = () => {
         hint_text: newLocation.hint_text
       });
       
-      // Очищаем форму и перезагружаем квест
       setNewLocation({
         name: '',
         description: '',
@@ -82,7 +154,38 @@ const EditQuestPage = () => {
     }
   };
 
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over.id) {
+      const oldIndex = locations.findIndex(l => l.id === active.id);
+      const newIndex = locations.findIndex(l => l.id === over.id);
+      const newLocations = arrayMove(locations, oldIndex, newIndex);
+      
+      // Обновляем order_number для всех локаций
+      const updatedLocations = newLocations.map((loc, idx) => ({
+        id: loc.id,
+        order_number: idx + 1
+      }));
+      
+      setLocations(newLocations);
+      
+      // Сохраняем новый порядок на сервере
+      try {
+        await questsAPI.reorderLocations(id, updatedLocations);
+      } catch (err) {
+        console.error('Ошибка сохранения порядка:', err);
+        alert('Ошибка сохранения порядка локаций');
+        loadQuest();
+      }
+    }
+  };
+
   const handlePublish = async () => {
+    if (locations.length === 0) {
+      alert('Нельзя опубликовать квест без локаций');
+      return;
+    }
     try {
       await questsAPI.publish(id);
       alert('Квест отправлен на модерацию');
@@ -95,13 +198,19 @@ const EditQuestPage = () => {
   if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
   if (!quest) return <div style={{ textAlign: 'center', padding: '50px' }}>Квест не найден</div>;
 
-  const isOwner = true; // Бэкенд проверит права
-
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <button onClick={() => navigate('/my-quests')} style={{ marginBottom: '20px', padding: '8px 16px', cursor: 'pointer' }}>
-        ← К моим квестам
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <button onClick={() => navigate('/my-quests')} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+          ← К моим квестам
+        </button>
+        <button 
+          onClick={() => navigate(`/quest/${id}`)}
+          style={{ padding: '8px 16px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Просмотр
+        </button>
+      </div>
       
       <h1>Редактирование: {quest.title}</h1>
       <p>Статус: {quest.status === 'draft' ? 'Черновик' : quest.status === 'pending' ? 'На модерации' : quest.status === 'published' ? 'Опубликован' : 'Отклонён'}</p>
@@ -116,33 +225,32 @@ const EditQuestPage = () => {
       )}
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-        {/* Список локаций */}
         <div>
-          <h2>Локации квеста</h2>
-          {quest.locations?.length === 0 ? (
+          <h2>Локации квеста (перетаскивайте для изменения порядка)</h2>
+          {locations.length === 0 ? (
             <p>Локации не добавлены</p>
           ) : (
-            quest.locations?.map((loc, idx) => (
-              <div key={loc.id} style={{ border: '1px solid #ddd', padding: '12px', marginBottom: '10px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 style={{ margin: 0 }}>{loc.order_number}. {loc.name}</h4>
-                  <button 
-                    onClick={() => handleDeleteLocation(loc.id)}
-                    style={{ background: '#ff4444', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer' }}
-                  >
-                    Удалить
-                  </button>
-                </div>
-                <p style={{ margin: '5px 0', fontSize: '14px' }}>{loc.description}</p>
-                <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
-                  Координаты: {loc.latitude}, {loc.longitude} | Очки: {loc.points_award}
-                </p>
-              </div>
-            ))
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={locations.map(l => l.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {locations.map((loc) => (
+                  <SortableLocation
+                    key={loc.id}
+                    location={loc}
+                    onDelete={handleDeleteLocation}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
         
-        {/* Форма добавления локации */}
         <div>
           <h2>Добавить локацию</h2>
           <form onSubmit={handleAddLocation}>
@@ -216,7 +324,7 @@ const EditQuestPage = () => {
       
       <div style={{ marginTop: '30px' }}>
         <h3>Карта квеста</h3>
-        <QuestMap locations={quest.locations || []} />
+        <QuestMap locations={locations} />
       </div>
     </div>
   );

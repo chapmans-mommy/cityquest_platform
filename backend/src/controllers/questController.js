@@ -4,13 +4,35 @@ const pool = require('../db');
 
 const getAllQuests = async (req, res) => {
   try {
-    const quests = await Quest.findAll({ status: 'published' });
-    res.json(quests);
+    const { search } = req.query;
+    
+    let query = `
+      SELECT 
+        q.*, 
+        u.nickname as author_name,
+        COUNT(l.id) as locations_count
+      FROM quests q
+      LEFT JOIN users u ON q.author_id = u.id
+      LEFT JOIN locations l ON q.id = l.quest_id
+      WHERE q.status = 'published'
+    `;
+    const values = [];
+    
+    if (search) {
+      query += ` AND (q.title ILIKE $1 OR q.description ILIKE $1)`;
+      values.push(`%${search}%`);
+    }
+    
+    query += ` GROUP BY q.id, u.nickname ORDER BY q.created_at DESC`;
+    
+    const result = await pool.query(query, values);
+    res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
+
 
 const getQuestById = async (req, res) => {
   try {
