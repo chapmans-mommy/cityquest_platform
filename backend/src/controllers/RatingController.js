@@ -11,7 +11,7 @@ const getLeaderboard = async (req, res) => {
     const result = await pool.query(query);
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error('Ошибка получения глобального рейтинга:', err);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
@@ -19,24 +19,23 @@ const getLeaderboard = async (req, res) => {
 const getWeeklyLeaderboard = async (req, res) => {
   try {
     const query = `
-      SELECT u.id, u.nickname, u.avatar_url, SUM(lc.points_award * 
-        CASE 
-          WHEN p.chosen_difficulty = 'easy' THEN 1
-          WHEN p.chosen_difficulty = 'medium' THEN 2
-          WHEN p.chosen_difficulty = 'hard' THEN 5
-        END) as weekly_points
+      SELECT 
+        u.id, 
+        u.nickname, 
+        u.avatar_url,
+        COALESCE(SUM(lc.points_earned), 0) as weekly_points
       FROM location_checks lc
       JOIN player_progress p ON lc.progress_id = p.id
       JOIN users u ON p.user_id = u.id
       WHERE lc.checked_at > NOW() - INTERVAL '7 days'
-      GROUP BY u.id
+      GROUP BY u.id, u.nickname, u.avatar_url
       ORDER BY weekly_points DESC
       LIMIT 10
     `;
     const result = await pool.query(query);
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error('Ошибка получения недельного рейтинга:', err);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 };

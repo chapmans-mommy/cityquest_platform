@@ -33,15 +33,15 @@ class LocationCheck {
     return result.rows;
   }
 
-  static async createWithTimer({ progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds }) {
+  static async createWithTimer({ progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds, points_earned }) {
     const time_overtaken = time_spent_seconds > time_limit_seconds && time_limit_seconds > 0;
     
     const query = `
-      INSERT INTO location_checks (progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds, time_overtaken)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO location_checks (progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds, time_overtaken, points_earned)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
-    const values = [progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds, time_overtaken];
+    const values = [progress_id, location_id, verification_method, hints_used_count, time_spent_seconds, time_limit_seconds, time_overtaken, points_earned];
     const result = await pool.query(query, values);
     return result.rows[0];
   }

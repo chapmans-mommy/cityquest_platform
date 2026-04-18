@@ -1,5 +1,6 @@
 const Quest = require('../models/Quest');
 const Location = require('../models/Location');
+const pool = require('../db');
 
 const getAllQuests = async (req, res) => {
   try {
@@ -201,6 +202,42 @@ const addLocation = async (req, res) => {
     }
   };
 
+  const getMyQuests = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const userRole = req.user.role;
+      
+      let query;
+      let values;
+      
+      if (userRole === 'admin') {
+        // Админ видит все квесты
+        query = `
+          SELECT q.*, u.nickname as author_name
+          FROM quests q
+          LEFT JOIN users u ON q.author_id = u.id
+          ORDER BY q.created_at DESC
+        `;
+        values = [];
+      } else {
+        // Организатор видит только свои квесты
+        query = `
+          SELECT q.*, u.nickname as author_name
+          FROM quests q
+          LEFT JOIN users u ON q.author_id = u.id
+          WHERE q.author_id = $1
+          ORDER BY q.created_at DESC
+        `;
+        values = [userId];
+      }
+      
+      const result = await pool.query(query, values);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Ошибка получения моих квестов:', err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  };
 
   module.exports = {
     getAllQuests,
@@ -213,5 +250,6 @@ const addLocation = async (req, res) => {
     addLocation,
     updateLocation,
     deleteLocation,
-    reorderLocations
+    reorderLocations,
+    getMyQuests
   };

@@ -10,7 +10,8 @@ const {
   addLocation,
   updateLocation,
   deleteLocation,
-  reorderLocations
+  reorderLocations,
+  getMyQuests
 } = require('../controllers/questController');
 const { protect, restrictTo } = require('../middleware/authMiddleware');
 
@@ -25,6 +26,8 @@ const router = express.Router();
  * @return {array<object>} 200 - массив квестов
  */
 router.get('/', getAllQuests);
+
+router.get('/my', protect, getMyQuests);
 
 // ========== МАРШРУТЫ ДЛЯ ЛОКАЦИЙ (ДОЛЖНЫ БЫТЬ ПЕРЕД /:id) ==========
 /**

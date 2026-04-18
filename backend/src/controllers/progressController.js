@@ -132,7 +132,8 @@ const checkLocation = async (req, res) => {
         verification_method: 'gps',
         hints_used_count: 0,
         time_spent_seconds: time_spent_seconds,
-        time_limit_seconds: timeLimit || 0
+        time_limit_seconds: timeLimit || 0,
+        points_earned: pointsEarned 
       });
       
       // Обновление очков в прогрессе
