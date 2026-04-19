@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { questsAPI } from '../services/api';
 import QuestMap from '../components/QuestMap';
 import './ProgressPage.css';
+import { progressAPI } from '../services/api';
 
 const ProgressPage = () => {
   const { id, progressId } = useParams();
@@ -132,6 +133,20 @@ const ProgressPage = () => {
     }
   };
 
+  const [requestSent, setRequestSent] = useState(false);
+
+const handleRequestManualCheck = async () => {
+  if (requestSent) return;
+  
+  try {
+    await progressAPI.requestManualCheck(progressId, currentLocation.id);
+    setRequestSent(true);
+    alert('Запрос отправлен администратору. Ожидайте подтверждения.');
+  } catch (err) {
+    alert(err.response?.data?.error || 'Ошибка отправки запроса');
+  }
+};
+
   if (loading) return (
     <div className="loading-container">
       <div className="loading-spinner"></div>
@@ -205,7 +220,15 @@ const ProgressPage = () => {
           disabled={checking || isPaused}
           className="checkin-btn"
         >
-          {checking ? 'Проверка...' : '📍 Отметиться на локации'}
+          {checking ? 'Проверка...' : 'Отметиться на локации по GPS'}
+        </button>
+
+        <button 
+            onClick={handleRequestManualCheck}
+            disabled={requestSent || checking || isPaused}
+            className="manual-request-btn"
+            >
+            {requestSent ? ' Запрос отправлен' : ' Отметиться через администратора'}
         </button>
       </div>
       

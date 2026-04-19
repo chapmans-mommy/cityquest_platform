@@ -1,0 +1,152 @@
+.admin-manual-requests {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .requests-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .requests-empty {
+    text-align: center;
+    padding: 40px;
+    color: #6A6D7B;
+  }
+  
+  .requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .request-card {
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .request-card:hover {
+    border-color: #C5B3FF;
+  }
+  
+  .request-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .request-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .request-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: #A0A0B0;
+  }
+  
+  .request-quest,
+  .request-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .request-icon {
+    font-size: 14px;
+  }
+  
+  .request-time {
+    font-size: 11px;
+    color: #6A6D7B;
+  }
+  
+  .request-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  
+  .approve-btn,
+  .reject-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+  
+  .approve-btn {
+    background: #9b89d5;
+    color: white;
+  }
+  
+  .approve-btn:hover:not(:disabled) {
+    background: #8272b7;
+    transform: translateY(-1px);
+  }
+  
+  .reject-btn {
+    background: #f443367c;
+    color: white;
+  }
+  
+  .reject-btn:hover:not(:disabled) {
+    background: #d32f2f8f;
+    transform: translateY(-1px);
+  }
+  
+  .approve-btn:disabled,
+  .reject-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .admin-requests-loading {
+    text-align: center;
+    padding: 40px;
+    color: #A0A0B0;
+  }
+  
+  @media (max-width: 768px) {
+    .admin-manual-requests {
+      padding: 16px;
+    }
+    
+    .request-card {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .request-actions {
+      justify-content: flex-end;
+    }
+    
+    .approve-btn,
+    .reject-btn {
+      flex: 1;
+      text-align: center;
+    }
+  }

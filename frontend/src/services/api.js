@@ -54,8 +54,21 @@ export const userAPI = {
     moderateQuest: (questId, status) => api.post(`/admin/quests/${questId}/moderate`, { status }),
     changeRole: (userId, role) => api.put(`/admin/users/${userId}/role`, { role }),
     getLogs: () => api.get('/admin/logs'),
+    getManualRequests: () => api.get('/admin/manual-requests'),
+    approveRequest: (id) => api.post(`/admin/manual-requests/${id}/approve`),
+    rejectRequest: (id) => api.post(`/admin/manual-requests/${id}/reject`),
   };
 
+  export const progressAPI = {
+    start: (questId, difficulty) => api.post(`/quests/${questId}/start`, { difficulty }),
+    checkLocation: (progressId, locationId, latitude, longitude, time_spent_seconds) => 
+      api.post(`/progress/${progressId}/check-location`, { locationId, latitude, longitude, time_spent_seconds }),
+    pause: (progressId) => api.post(`/progress/${progressId}/pause`),
+    resume: (progressId) => api.post(`/progress/${progressId}/resume`),
+    abort: (progressId) => api.post(`/progress/${progressId}/abort`),
+    requestManualCheck: (progressId, locationId) => 
+      api.post(`/progress/${progressId}/request-manual-check`, { locationId }),
+  };
 
   
 export default api;

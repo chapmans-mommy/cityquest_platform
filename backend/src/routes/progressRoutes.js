@@ -1,7 +1,12 @@
 const express = require('express');
 const { startQuest, checkLocation, abortQuest, pauseQuest, resumeQuest } = require('../controllers/progressController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, restrictTo } = require('../middleware/authMiddleware');
 const Achievement = require('../models/Achievement');
+const PlayerProgress = require('../models/PlayerProgress');
+const Location = require('../models/Location');
+const LocationCheck = require('../models/LocationCheck');
+const User = require('../models/User');
+const ManualCheckRequest = require('../models/ManualCheckRequest');
 const pool = require('../db');
 
 const router = express.Router();
@@ -133,5 +138,144 @@ router.put('/user/avatar', protect, async (req, res) => {
       res.status(500).json({ error: 'Ошибка сервера' });
     }
   });
+
+// Пользователь отправляет запрос на ручную отметку
+router.post('/progress/:progressId/request-manual-check', protect, async (req, res) => {
+    try {
+      const { progressId } = req.params;
+      const { locationId } = req.body;
+      const userId = req.user.id;
+  
+      // Проверяем прогресс
+      const progress = await PlayerProgress.findById(parseInt(progressId));
+      if (!progress || progress.user_id !== userId) {
+        return res.status(404).json({ error: 'Прогресс не найден' });
+      }
+      if (progress.status !== 'in_progress') {
+        return res.status(400).json({ error: 'Квест уже завершён' });
+      }
+  
+      // Проверяем, не отправлен ли уже запрос
+      const existingRequest = await ManualCheckRequest.findByProgressAndLocation(progressId, locationId);
+      if (existingRequest) {
+        return res.status(400).json({ error: 'Запрос уже отправлен' });
+      }
+  
+      // Получаем локацию
+      const location = await Location.findById(parseInt(locationId));
+      if (!location) {
+        return res.status(404).json({ error: 'Локация не найдена' });
+      }
+  
+      // Создаём запрос
+      const request = await ManualCheckRequest.create({
+        user_id: userId,
+        progress_id: progressId,
+        location_id: locationId,
+        quest_id: location.quest_id
+      });
+  
+      res.status(201).json({ 
+        message: 'Запрос отправлен администратору', 
+        requestId: request.id 
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  // Админ получает все запросы
+  router.get('/admin/manual-requests', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      const requests = await ManualCheckRequest.findAllPending();
+      res.json(requests);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  // Админ одобряет запрос
+  router.post('/admin/manual-requests/:id/approve', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Получаем запрос
+      const requestQuery = 'SELECT * FROM manual_check_requests WHERE id = $1';
+      const requestResult = await pool.query(requestQuery, [id]);
+      
+      if (requestResult.rows.length === 0) {
+        return res.status(404).json({ error: 'Запрос не найден' });
+      }
+      
+      const request = requestResult.rows[0];
+      
+      // Получаем локацию
+      const location = await Location.findById(request.location_id);
+      
+      // Расчёт очков с учётом сложности
+      const progress = await PlayerProgress.findById(request.progress_id);
+      const multiplier = progress.chosen_difficulty === 'easy' ? 1 :
+                         progress.chosen_difficulty === 'medium' ? 2 : 5;
+      const pointsEarned = location.points_award * multiplier;
+      
+      // Создаём отметку
+      await LocationCheck.create({
+        progress_id: request.progress_id,
+        location_id: request.location_id,
+        verification_method: 'manual',
+        hints_used_count: 0,
+        time_spent_seconds: 0,
+        points_earned: pointsEarned
+      });
+      
+      // Обновляем очки в прогрессе
+      await PlayerProgress.updatePoints(request.progress_id, pointsEarned);
+      
+      // Обновляем общий счёт пользователя
+      await User.updateTotalPoints(request.user_id, pointsEarned);
+      
+      // Обновляем статус запроса
+      await ManualCheckRequest.approve(parseInt(id), pointsEarned);
+      
+      // Проверяем, завершён ли квест
+      const allLocations = await Location.findByQuestId(location.quest_id);
+      const checkedLocations = await LocationCheck.findByProgressId(request.progress_id);
+      
+      if (checkedLocations.length === allLocations.length) {
+        await PlayerProgress.complete(request.progress_id, progress.total_points + pointsEarned);
+        const newAchievements = await Achievement.checkAndGrantAll(request.user_id);
+        
+        return res.json({
+          message: 'Квест завершён!',
+          pointsEarned,
+          completed: true,
+          earnedAchievements: newAchievements
+        });
+      }
+      
+      res.json({
+        message: 'Отметка подтверждена',
+        pointsEarned,
+        completed: false
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  // Админ отклоняет запрос
+  router.post('/admin/manual-requests/:id/reject', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      const { id } = req.params;
+      await ManualCheckRequest.reject(parseInt(id));
+      res.json({ message: 'Запрос отклонён' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });  
 
 module.exports = router;

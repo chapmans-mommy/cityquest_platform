@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import './AdminPage.css';
+import AdminManualRequests from '../components/AdminManualRequests';
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -71,6 +72,12 @@ const AdminPage = () => {
           Квесты на модерации
         </button>
         <button 
+            className={`admin-tab ${activeTab === 'requests' ? 'active' : ''}`}
+            onClick={() => setActiveTab('requests')}
+            >
+            Ручная отметка
+            </button>
+        <button 
           className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
           onClick={() => setActiveTab('users')}
         >
@@ -118,7 +125,14 @@ const AdminPage = () => {
           )}
         </div>
       )}
-      
+
+      {activeTab === 'requests' && (
+        <div className="admin-section">
+            <h2 className="section-title">Запросы на ручную отметку</h2>
+            <AdminManualRequests />
+        </div>
+      )}
+
       {activeTab === 'users' && (
         <div className="admin-section">
           <h2 className="section-title">Пользователи</h2>

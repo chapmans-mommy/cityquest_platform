@@ -122,8 +122,8 @@
   
   .pause-btn {
     background: #1A1D2B;
-    border: 1px solid #FF9800;
-    color: #FF9800;
+    border: 1px solid #C5B3FF;
+    color: #C5B3FF;
   }
   
   .pause-btn:hover:not(:disabled) {
@@ -252,6 +252,30 @@
     background: #B8A9FF;
     transform: translateY(-2px);
   }
+
+  .manual-request-btn {
+    flex: 1;
+    background: #ac94fc;
+    border: none;
+    color: #0B0E17;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .manual-request-btn:hover:not(:disabled) {
+    background: #9d89ff;
+    transform: translateY(-2px);
+  }
+  
+  .manual-request-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   
   @media (max-width: 768px) {
     .progress-container {
