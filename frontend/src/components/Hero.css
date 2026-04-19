@@ -13,14 +13,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url(https://avatars.mds.yandex.net/i?id=7b56d79be18330229aea485e07d00396_l-8312878-images-thumbs&n=13);
     background-repeat: no-repeat;      /* Убираем повторение */
     background-size: cover;            /* Растягиваем, чтобы покрыть всю область */
     background-position: center center; 
-    opacity: 0.4; /* Настройте прозрачность, если нужно */
-    z-index: 0;
-    transition: transform 0.1s ease-out;
-    transform: scale(1.02);
+    
   }
 
   .hero-overlay {
@@ -29,7 +25,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(ellipse at 30% 50%, rgba(11,14,23,0.3), rgba(11,14,23,0.95));
+    background: radial-gradient(ellipse at 10% 10%, rgba(11,14,23,0.01), rgba(11,14,23,0.5));
   }
   
   .hero-content {

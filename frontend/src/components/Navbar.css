@@ -10,7 +10,6 @@
   .navbar-container {
     max-width: 1400px;
     margin: 0 auto;
-    margin-top: 8px;
     padding: 16px 10px;
     display: flex;
     justify-content: space-between;
