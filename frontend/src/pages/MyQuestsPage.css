@@ -1,0 +1,210 @@
+.my-quests-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .my-quests-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .my-quests-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  
+  .create-quest-btn {
+    background: #C5B3FF;
+    color: #0B0E17;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .create-quest-btn:hover {
+    background: #B8A9FF;
+    transform: translateY(-2px);
+  }
+  
+  .my-quests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .my-quest-card {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .my-quest-card:hover {
+    border-color: #C5B3FF;
+    transform: translateX(4px);
+  }
+  
+  .my-quest-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .my-quest-info {
+    flex: 1;
+  }
+  
+  .my-quest-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 8px;
+  }
+  
+  .my-quest-description {
+    font-size: 14px;
+    color: #A0A0B0;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  
+  .my-quest-meta {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #6A6D7B;
+  }
+  
+  .meta-icon {
+    font-size: 14px;
+  }
+  
+  .my-quest-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+  
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .status-published {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+  }
+  
+  .status-pending {
+    background: rgba(255, 152, 0, 0.15);
+    color: #FF9800;
+    border: 1px solid #FF9800;
+  }
+  
+  .status-draft {
+    background: rgba(158, 158, 158, 0.15);
+    color: #9E9E9E;
+    border: 1px solid #9E9E9E;
+  }
+  
+  .status-rejected {
+    background: rgba(244, 67, 54, 0.15);
+    color: #F44336;
+    border: 1px solid #F44336;
+  }
+  
+  .edit-quest-btn {
+    background: none;
+    border: 1px solid #C5B3FF;
+    color: #C5B3FF;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .edit-quest-btn:hover {
+    background: rgba(197, 179, 255, 0.1);
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+  }
+  
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+  
+  .empty-text {
+    color: #A0A0B0;
+    margin-bottom: 24px;
+  }
+  
+  .empty-create-btn {
+    background: #C5B3FF;
+    color: #0B0E17;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .empty-create-btn:hover {
+    background: #B8A9FF;
+  }
+  
+  @media (max-width: 768px) {
+    .my-quests-container {
+      padding: 24px 16px;
+    }
+    
+    .my-quests-title {
+      font-size: 24px;
+    }
+    
+    .my-quest-card-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .my-quest-status {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+    }
+  }

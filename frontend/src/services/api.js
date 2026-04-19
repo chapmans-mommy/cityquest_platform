@@ -34,6 +34,7 @@ export const questsAPI = {
     deleteLocation: (locationId) => api.delete(`/locations/${locationId}`),
     publish: (questId) => api.post(`/quests/${questId}/publish`),
     reorderLocations: (questId, locations) => api.put(`/quests/${questId}/locations/reorder`, { locations }),
+    delete: (id) => api.delete(`/quests/${id}`),
 };
 
 export const leaderboardAPI = {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questsAPI } from '../services/api';
+import './MyQuestsPage.css';
 
 const MyQuestsPage = () => {
   const navigate = useNavigate();
@@ -32,55 +33,79 @@ const MyQuestsPage = () => {
     }
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
+  const getStatusClass = (status) => {
+    switch(status) {
+      case 'published': return 'status-published';
+      case 'pending': return 'status-pending';
+      case 'draft': return 'status-draft';
+      case 'rejected': return 'status-rejected';
+      default: return '';
+    }
+  };
+
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
 
   return (
-    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>Мои квесты</h1>
+    <div className="my-quests-container">
+      <div className="my-quests-header">
+        <h1 className="my-quests-title">Мои квесты</h1>
         <button 
           onClick={() => navigate('/create-quest')}
-          style={{ padding: '10px 20px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          className="create-quest-btn"
         >
           + Создать квест
         </button>
       </div>
       
       {quests.length === 0 ? (
-        <p>У вас пока нет квестов. Создайте первый!</p>
-      ) : (
-        quests.map(quest => (
-          <div 
-            key={quest.id}
-            onClick={() => navigate(`/quest/${quest.id}`)}
-            style={{ 
-              border: '1px solid #ddd', 
-              borderRadius: '8px', 
-              padding: '16px', 
-              marginBottom: '16px',
-              cursor: 'pointer',
-              backgroundColor: 'white'
-            }}
+        <div className="empty-state">
+          <div className="empty-icon"></div>
+          <p className="empty-text">У вас пока нет квестов</p>
+          <button 
+            onClick={() => navigate('/create-quest')}
+            className="empty-create-btn"
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0 }}>{quest.title}</h3>
-              <span style={{ 
-                padding: '4px 12px', 
-                borderRadius: '20px', 
-                fontSize: '12px',
-                backgroundColor: 
-                  quest.status === 'published' ? '#4CAF50' :
-                  quest.status === 'pending' ? '#ff9800' :
-                  quest.status === 'rejected' ? '#f44336' : '#999',
-                color: 'white'
-              }}>
-                {getStatusText(quest.status)}
-              </span>
+            Создать первый квест
+          </button>
+        </div>
+      ) : (
+        <div className="my-quests-list">
+          {quests.map(quest => (
+            <div 
+              key={quest.id}
+              className="my-quest-card"
+              onClick={() => navigate(`/quest/${quest.id}`)}
+            >
+              <div className="my-quest-card-content">
+                <div className="my-quest-info">
+                  <h3 className="my-quest-title">{quest.title}</h3>
+                  <p className="my-quest-description">
+                    {quest.description?.substring(0, 120)}...
+                  </p>
+                  <div className="my-quest-meta">
+                    <span className="meta-item">
+                      <span className="meta-icon"></span>
+                      количество локаций: {quest.locations?.length || 0} 
+                    </span>
+                    <span className="meta-item">
+                      <span className="meta-icon"></span>
+                      {quest.author_name}
+                    </span>
+                  </div>
+                </div>
+                <div className="my-quest-status">
+                  <span className={`status-badge ${getStatusClass(quest.status)}`}>
+                    {getStatusText(quest.status)}
+                  </span>
+                </div>
+              </div>
             </div>
-            <p style={{ color: '#666', marginTop: '8px' }}>{quest.description?.substring(0, 100)}</p>
-            <p style={{ fontSize: '12px', color: '#999' }}>Локаций: {quest.locations?.length || 0}</p>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

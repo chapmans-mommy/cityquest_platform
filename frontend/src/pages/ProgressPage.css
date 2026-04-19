@@ -1,0 +1,285 @@
+.progress-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .abort-btn {
+    background: none;
+    border: 1px solid #F44336;
+    color: #F44336;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .abort-btn:hover {
+    background: rgba(244, 67, 54, 0.1);
+  }
+  
+  .progress-stats {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .stat-badge {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 40px;
+    padding: 8px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  
+  .stat-badge .stat-label {
+    font-size: 12px;
+    color: #6A6D7B;
+  }
+  
+  .stat-badge .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #C5B3FF;
+  }
+  
+  .current-location-card {
+    background: linear-gradient(135deg, #1A1D2B, #0F111A);
+    border: 1px solid #2A2D3B;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .location-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+  
+  .location-description {
+    color: #A0A0B0;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .hint-box {
+    background: rgba(197, 179, 255, 0.1);
+    border: 1px solid #C5B3FF;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .hint-icon {
+    font-size: 18px;
+  }
+  
+  .hint-text {
+    color: #C5B3FF;
+    font-size: 14px;
+  }
+  
+  .location-points {
+    font-size: 14px;
+    color: #4CAF50;
+    font-weight: 500;
+  }
+  
+  .progress-controls {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  
+  .pause-btn,
+  .resume-btn,
+  .checkin-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .pause-btn {
+    background: #1A1D2B;
+    border: 1px solid #FF9800;
+    color: #FF9800;
+  }
+  
+  .pause-btn:hover:not(:disabled) {
+    background: rgba(255, 152, 0, 0.1);
+  }
+  
+  .pause-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .resume-btn {
+    background: #4CAF50;
+    border: none;
+    color: white;
+  }
+  
+  .resume-btn:hover {
+    background: #45a049;
+  }
+  
+  .checkin-btn {
+    background: #C5B3FF;
+    border: none;
+    color: #0B0E17;
+  }
+  
+  .checkin-btn:hover:not(:disabled) {
+    background: #B8A9FF;
+    transform: translateY(-2px);
+  }
+  
+  .checkin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .map-container {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .map-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 16px;
+  }
+  
+  .next-location-card {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 20px;
+  }
+  
+  .next-location-card h4 {
+    font-size: 14px;
+    color: #6A6D7B;
+    margin-bottom: 8px;
+  }
+  
+  .next-location-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+  }
+  
+  .next-location-desc {
+    font-size: 14px;
+    color: #A0A0B0;
+  }
+  
+  .completion-screen {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+  
+  .completion-card {
+    background: #1A1D2B;
+    border: 1px solid #4CAF50;
+    border-radius: 24px;
+    padding: 48px;
+    text-align: center;
+    max-width: 400px;
+  }
+  
+  .completion-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  
+  .completion-card h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+  
+  .completion-card p {
+    font-size: 18px;
+    color: #C5B3FF;
+    margin-bottom: 24px;
+  }
+  
+  .completion-btn {
+    background: #C5B3FF;
+    color: #0B0E17;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .completion-btn:hover {
+    background: #B8A9FF;
+    transform: translateY(-2px);
+  }
+  
+  @media (max-width: 768px) {
+    .progress-container {
+      padding: 24px 16px;
+    }
+    
+    .progress-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .progress-stats {
+      justify-content: center;
+    }
+    
+    .current-location-card {
+      padding: 24px;
+    }
+    
+    .location-name {
+      font-size: 22px;
+    }
+    
+    .progress-controls {
+      flex-direction: column;
+    }
+    
+    .completion-card {
+      padding: 32px 24px;
+    }
+  }

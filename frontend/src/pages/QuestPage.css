@@ -1,0 +1,320 @@
+.quest-page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .quest-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  
+  .back-btn {
+    background: none;
+    border: 1px solid #3A3D4B;
+    color: #E0E0E0;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .back-btn:hover {
+    border-color: #C5B3FF;
+    color: #C5B3FF;
+  }
+  
+  .edit-btn {
+    background: none;
+    border: 1px solid #C5B3FF;
+    color: #C5B3FF;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .edit-btn:hover {
+    background: rgba(255, 152, 0, 0.1);
+  }
+  
+  .quest-page-content {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 20px;
+    padding: 32px;
+  }
+  
+  .quest-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  
+  .quest-description {
+    font-size: 16px;
+    color: #A0A0B0;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  
+  .quest-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  
+  .info-card {
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .info-icon {
+    font-size: 24px;
+  }
+  
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .info-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6A6D7B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .status-published {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+  }
+  
+  .status-pending {
+    background: rgba(255, 152, 0, 0.15);
+    color: #FF9800;
+    border: 1px solid #FF9800;
+  }
+  
+  .status-draft {
+    background: rgba(158, 158, 158, 0.15);
+    color: #9E9E9E;
+    border: 1px solid #9E9E9E;
+  }
+  
+  .status-rejected {
+    background: rgba(244, 67, 54, 0.15);
+    color: #F44336;
+    border: 1px solid #F44336;
+  }
+  
+  .map-section {
+    margin-bottom: 40px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .start-section {
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  
+  .difficulty-selector {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .difficulty-option {
+    flex: 1;
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .difficulty-option input {
+    display: none;
+  }
+  
+  .difficulty-option.active {
+    border-color: #C5B3FF;
+    background: rgba(197, 179, 255, 0.05);
+  }
+  
+  .difficulty-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .difficulty-desc {
+    font-size: 11px;
+    color: #6A6D7B;
+    text-align: center;
+  }
+  
+  .difficulty-option.active .difficulty-name {
+    color: #C5B3FF;
+  }
+  
+  .start-btn {
+    width: 100%;
+    background: #C5B3FF;
+    color: #0B0E17;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .start-btn:hover:not(:disabled) {
+    background: #B8A9FF;
+    transform: translateY(-2px);
+  }
+  
+  .start-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    max-width: 500px;
+    margin: 80px auto;
+  }
+  
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+  
+  .empty-state p {
+    color: #A0A0B0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .delete-btn {
+    background: none;
+    border: 1px solid #c04e46;
+    color: #c04e46;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .delete-btn:hover:not(:disabled) {
+    background: rgba(244, 67, 54, 0.1);
+  }
+  
+  .delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    .quest-page-header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+    }
+    
+    .header-actions {
+      justify-content: center;
+    }
+    
+    .edit-btn, .delete-btn, .back-btn {
+      flex: 1;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .quest-page-container {
+      padding: 24px 16px;
+    }
+    
+    .quest-page-content {
+      padding: 20px;
+    }
+    
+    .quest-title {
+      font-size: 24px;
+    }
+    
+    .quest-info-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    
+    .difficulty-selector {
+      flex-direction: column;
+    }
+    
+    .difficulty-option {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .difficulty-desc {
+      text-align: right;
+    }
+  }

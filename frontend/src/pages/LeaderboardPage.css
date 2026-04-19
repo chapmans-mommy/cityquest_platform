@@ -1,0 +1,133 @@
+.leaderboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .leaderboard-header {
+    margin-bottom: 32px;
+  }
+  
+  .leaderboard-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+  }
+  
+  .tab-buttons {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .tab-btn {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #A0A0B0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tab-btn:hover {
+    border-color: #C5B3FF;
+    color: #C5B3FF;
+  }
+  
+  .tab-btn.active {
+    background: #C5B3FF;
+    border-color: #C5B3FF;
+    color: #0B0E17;
+  }
+  
+  .leaderboard-table-container {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .leaderboard-table thead tr {
+    background: #0F111A;
+    border-bottom: 1px solid #2A2D3B;
+  }
+  
+  .leaderboard-table th {
+    text-align: left;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #C5B3FF;
+    letter-spacing: 0.5px;
+  }
+  
+  .leaderboard-table td {
+    padding: 14px 20px;
+    font-size: 15px;
+    color: #E0E0E0;
+    border-bottom: 1px solid #2A2D3B;
+  }
+  
+  .leaderboard-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .leaderboard-table tbody tr:hover {
+    background: #1F2232;
+  }
+  
+  .rank-cell {
+    font-weight: 600;
+    width: 80px;
+  }
+  
+  .player-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .player-name {
+    font-weight: 500;
+  }
+  
+  .points-cell {
+    text-align: right;
+    font-weight: 600;
+    color: #C5B3FF;
+  }
+  
+  .empty-row {
+    text-align: center;
+    padding: 40px;
+    color: #6A6D7B;
+  }
+  
+  @media (max-width: 768px) {
+    .leaderboard-container {
+      padding: 24px 16px;
+    }
+    
+    .leaderboard-title {
+      font-size: 24px;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 12px 12px;
+      font-size: 13px;
+    }
+    
+    .rank-cell {
+      width: 60px;
+    }
+  }

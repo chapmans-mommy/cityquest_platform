@@ -1,0 +1,247 @@
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .admin-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 32px;
+    letter-spacing: -0.5px;
+  }
+  
+  .admin-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #2A2D3B;
+    padding-bottom: 16px;
+  }
+  
+  .admin-tab {
+    background: none;
+    border: none;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #A0A0B0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+  }
+  
+  .admin-tab:hover {
+    color: #C5B3FF;
+  }
+  
+  .admin-tab.active {
+    background: #1A1D2B;
+    color: #C5B3FF;
+  }
+  
+  .admin-section {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  
+  .admin-section .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .quests-moderate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .moderate-card {
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+  }
+  
+  .moderate-card:hover {
+    border-color: #C5B3FF;
+  }
+  
+  .moderate-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .moderate-card-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .quest-author {
+    font-size: 12px;
+    color: #6A6D7B;
+  }
+  
+  .moderate-card-description {
+    color: #A0A0B0;
+    font-size: 14px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  
+  .moderate-card-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .btn-approve {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  
+  .btn-approve:hover {
+    opacity: 0.85;
+  }
+  
+  .btn-reject {
+    background: #F44336;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  
+  .btn-reject:hover {
+    opacity: 0.85;
+  }
+  
+  .users-table-container,
+  .logs-table-container {
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-table th {
+    text-align: left;
+    padding: 12px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #C5B3FF;
+    border-bottom: 1px solid #2A2D3B;
+  }
+  
+  .admin-table td {
+    padding: 12px 12px;
+    font-size: 14px;
+    color: #E0E0E0;
+    border-bottom: 1px solid #2A2D3B;
+  }
+  
+  .admin-table tr:hover td {
+    background: #1F2232;
+  }
+  
+  .role-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .role-player {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4CAF50;
+  }
+  
+  .role-organizer {
+    background: rgba(255, 152, 0, 0.15);
+    color: #FF9800;
+  }
+  
+  .role-admin {
+    background: rgba(197, 179, 255, 0.15);
+    color: #C5B3FF;
+  }
+  
+  .role-select {
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #E0E0E0;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  
+  .role-select:focus {
+    outline: none;
+    border-color: #C5B3FF;
+  }
+  
+  .log-action {
+    font-family: monospace;
+    font-size: 12px;
+    color: #A0A0B0;
+  }
+  
+  .empty-row {
+    text-align: center;
+    padding: 40px;
+    color: #6A6D7B;
+  }
+  
+  @media (max-width: 768px) {
+    .admin-container {
+      padding: 24px 16px;
+    }
+    
+    .admin-title {
+      font-size: 24px;
+    }
+    
+    .admin-tabs {
+      flex-wrap: wrap;
+    }
+    
+    .admin-section {
+      padding: 16px;
+    }
+    
+    .moderate-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }

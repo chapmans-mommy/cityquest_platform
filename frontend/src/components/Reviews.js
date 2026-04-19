@@ -158,13 +158,13 @@ const Reviews = ({ questId }) => {
               {(user?.id === review.user_id || user?.role === 'admin') && (
                 <button 
                   onClick={() => handleDelete(review.id)}
-                  style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer', fontSize: '18px' }}
+                  style={{ background: 'none', border: 'none', color: 'purple', cursor: 'pointer', fontSize: '18px' }}
                 >
                   ✕
                 </button>
               )}
             </div>
-            <p style={{ marginTop: '8px', color: '#333' }}>{review.comment}</p>
+            <p style={{ marginTop: '8px', color: 'gray' }}>{review.comment}</p>
           </div>
         ))
       )}

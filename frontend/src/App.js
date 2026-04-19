@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import HomePage from './pages/HomePage';
@@ -13,70 +14,23 @@ import EditQuestPage from './pages/EditQuestPage';
 import MyQuestsPage from './pages/MyQuestsPage';
 import AdminPage from './pages/AdminPage';
 
-
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div>Загрузка...</div>;
+  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
   if (!user) return <Navigate to="/login" />;
   return children;
 };
 
 function AppRoutes() {
-  const { user, logout } = useAuth();
-
   return (
     <div>
-      {user && (
-        <div style={{ padding: '10px', background: '#f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <span>Привет, {user.nickname} ({user.role})</span>
-          
-          {/* Ссылка на главную — для всех */}
-          <a href="/" style={{ marginLeft: '15px' }}>Главная</a>
-          
-          {/* Ссылка на профиль — для всех */}
-          <a href="/profile" style={{ marginLeft: '15px' }}>Профиль</a>
-          
-          {/* Ссылка на рейтинг — для всех */}
-          <a href="/leaderboard" style={{ marginLeft: '15px' }}>Рейтинг</a>
-          
-          {/* Ссылки для организатора */}
-          {user.role === 'organizer' && (
-            <>
-              <a href="/my-quests" style={{ marginLeft: '15px' }}>Мои квесты</a>
-              <a href="/create-quest" style={{ marginLeft: '15px' }}>Создать квест</a>
-            </>
-          )}
-          
-          {/* Ссылки для админа */}
-          {user.role === 'admin' && (
-            <>
-              <a href="/admin" style={{ marginLeft: '15px' }}>Админ-панель</a>
-              <a href="/my-quests" style={{ marginLeft: '15px' }}>Мои квесты</a>
-              <a href="/create-quest" style={{ marginLeft: '15px' }}>Создать квест</a>
-            </>
-          )}
-        </div>
-        <button onClick={logout}>Выйти</button>
-      </div>       
-      )}
-      
+      <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={
           <ProtectedRoute>
             <HomePage />
-          </ProtectedRoute>
-        } />
-        <Route path="/quest/:id" element={
-          <ProtectedRoute>
-            <QuestPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/quest/:id/progress/:progressId" element={
-          <ProtectedRoute>
-            <ProgressPage />
           </ProtectedRoute>
         } />
         <Route path="/profile" element={
@@ -87,6 +41,16 @@ function AppRoutes() {
         <Route path="/leaderboard" element={
           <ProtectedRoute>
             <LeaderboardPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/quest/:id" element={
+          <ProtectedRoute>
+            <QuestPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/quest/:id/progress/:progressId" element={
+          <ProtectedRoute>
+            <ProgressPage />
           </ProtectedRoute>
         } />
         <Route path="/create-quest" element={

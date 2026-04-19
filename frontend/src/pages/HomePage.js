@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { questsAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import QuestCard from '../components/QuestCard';
+import Hero from '../components/Hero';
+import './HomePage.css';
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [quests, setQuests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -13,7 +17,12 @@ const HomePage = () => {
 
   const loadQuests = async () => {
     try {
-      const res = await questsAPI.getAll();
+      let res;
+      if (user && (user.role === 'admin' || user.role === 'organizer')) {
+        res = await questsAPI.getMyQuests();
+      } else {
+        res = await questsAPI.getAll();
+      }
       setQuests(res.data);
     } catch (err) {
       console.error('Ошибка загрузки квестов:', err);
@@ -27,36 +36,40 @@ const HomePage = () => {
     quest.description?.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
+  const isAdminOrOrganizer = user && (user.role === 'admin' || user.role === 'organizer');
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <h1 style={{ marginBottom: '20px' }}>Доступные квесты</h1>
+    <div>
+      <Hero />
       
-      <input
-        type="text"
-        placeholder="Поиск квестов..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '12px',
-          marginBottom: '20px',
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          fontSize: '16px'
-        }}
-      />
-      
-      {filteredQuests.length === 0 ? (
-        <p>Квесты не найдены</p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {filteredQuests.map(quest => (
-            <QuestCard key={quest.id} quest={quest} />
-          ))}
+      <div className="quests-section">
+        <div className="container">
+          <div className="quests-header">
+            <h2 className="section-title">
+              {isAdminOrOrganizer ? 'Мои квесты' : 'Доступные квесты'}
+            </h2>
+            <input
+              type="text"
+              placeholder="Поиск квестов..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-input"
+            />
+          </div>
+          
+          {loading ? (
+            <div className="loading">Загрузка...</div>
+          ) : filteredQuests.length === 0 ? (
+            <p className="empty-message">Квесты не найдены</p>
+          ) : (
+            <div className="quests-grid">
+              {filteredQuests.map(quest => (
+                <QuestCard key={quest.id} quest={quest} />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

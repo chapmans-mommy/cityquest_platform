@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questsAPI } from '../services/api';
+import './CreateQuestPage.css';
 
 const CreateQuestPage = () => {
   const navigate = useNavigate();
@@ -29,60 +30,66 @@ const CreateQuestPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h1>Создать новый квест</h1>
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Название *</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-          />
-        </div>
+    <div className="create-quest-container">
+      <div className="create-quest-card">
+        <h1 className="create-quest-title">Создать новый квест</h1>
+        <p className="create-quest-subtitle">Заполните основную информацию</p>
         
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Описание</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows="4"
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-          />
-        </div>
+        {error && <div className="error-message">{error}</div>}
         
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Ссылка на обложку</label>
-          <input
-            type="url"
-            value={coverImageUrl}
-            onChange={(e) => setCoverImageUrl(e.target.value)}
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-          />
-        </div>
-        
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            type="submit" 
-            disabled={loading}
-            style={{ padding: '10px 20px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            {loading ? 'Создание...' : 'Создать квест'}
-          </button>
-          <button 
-            type="button"
-            onClick={() => navigate('/my-quests')}
-            style={{ padding: '10px 20px', background: '#666', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Отмена
-          </button>
-        </div>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Название квеста *</label>
+            <input
+              type="text"
+              className="form-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Например: Тайны Арбата"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label className="form-label">Описание</label>
+            <textarea
+              className="form-textarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Расскажите, что ждёт участников..."
+              rows="5"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label className="form-label">Ссылка на обложку</label>
+            <input
+              type="url"
+              className="form-input"
+              value={coverImageUrl}
+              onChange={(e) => setCoverImageUrl(e.target.value)}
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+          
+          <div className="form-actions">
+            <button 
+              type="button"
+              onClick={() => navigate('/my-quests')}
+              className="btn-secondary"
+            >
+              Отмена
+            </button>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="btn-primary"
+            >
+              {loading ? 'Создание...' : 'Создать квест'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

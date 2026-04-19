@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import './AuthPages.css';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -21,45 +22,54 @@ const Register = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '50px auto', padding: 20 }}>
-      <h2>Регистрация</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 15 }}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            required
-          />
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1 className="auth-title">Регистрация</h1>
+        <p className="auth-subtitle">Создайте аккаунт</p>
+        
+        {error && <div className="auth-error">{error}</div>}
+        
+        <form onSubmit={handleSubmit}>
+          <div className="auth-form-group">
+            <label className="auth-label">Email</label>
+            <input
+              type="email"
+              className="auth-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="auth-form-group">
+            <label className="auth-label">Никнейм</label>
+            <input
+              type="text"
+              className="auth-input"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="auth-form-group">
+            <label className="auth-label">Пароль</label>
+            <input
+              type="password"
+              className="auth-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          
+          <button type="submit" className="auth-button">Зарегистрироваться</button>
+        </form>
+        
+        <div className="auth-footer">
+          Уже есть аккаунт? <Link to="/login">Войти</Link>
         </div>
-        <div style={{ marginBottom: 15 }}>
-          <input
-            type="text"
-            placeholder="Никнейм"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: 15 }}>
-          <input
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: '100%', padding: 8 }}
-            required
-          />
-        </div>
-        <button type="submit" style={{ padding: '8px 16px' }}>Зарегистрироваться</button>
-      </form>
-      <p style={{ marginTop: 15 }}>
-        Уже есть аккаунт? <Link to="/login">Войти</Link>
-      </p>
+      </div>
     </div>
   );
 };

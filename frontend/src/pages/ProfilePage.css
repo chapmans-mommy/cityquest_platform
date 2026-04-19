@@ -1,0 +1,246 @@
+.profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 40px;
+    background: #1A1D2B;
+    border-radius: 20px;
+    padding: 32px;
+    border: 1px solid #2A2D3B;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #C5B3FF, #9B87E0);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 600;
+    color: #0B0E17;
+  }
+  
+  .profile-info {
+    flex: 1;
+  }
+  
+  .profile-name {
+    font-size: 32px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 8px;
+  }
+  
+  .profile-email {
+    color: #A0A0B0;
+    margin-bottom: 12px;
+  }
+  
+  .profile-role {
+    display: inline-block;
+    background: rgba(197, 179, 255, 0.15);
+    border: 1px solid #C5B3FF;
+    color: #C5B3FF;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  
+  .stat-card {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .stat-card:hover {
+    border-color: #C5B3FF;
+    transform: translateY(-2px);
+  }
+  
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #C5B3FF;
+    margin-bottom: 8px;
+  }
+  
+  .stat-label {
+    color: #A0A0B0;
+    font-size: 14px;
+  }
+  
+  .profile-section {
+    margin-bottom: 48px;
+  }
+  
+  .profile-section .section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #2A2D3B;
+  }
+  
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  
+  .achievement-card {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .achievement-card:hover {
+    border-color: #C5B3FF;
+  }
+  
+  .achievement-icon {
+    font-size: 32px;
+  }
+  
+  .achievement-info {
+    flex: 1;
+  }
+  
+  .achievement-name {
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+  }
+  
+  .achievement-desc {
+    font-size: 12px;
+    color: #A0A0B0;
+    margin-bottom: 8px;
+  }
+  
+  .achievement-points {
+    font-size: 12px;
+    color: #C5B3FF;
+  }
+  
+  .completed-quests-list {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .completed-quest-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #2A2D3B;
+    transition: background 0.2s ease;
+  }
+  
+  .completed-quest-item:last-child {
+    border-bottom: none;
+  }
+  
+  .completed-quest-item:hover {
+    background: #1F2232;
+  }
+  
+  .quest-icon {
+    font-size: 24px;
+  }
+  
+  .quest-info {
+    flex: 1;
+  }
+  
+  .quest-name {
+    font-weight: 500;
+    color: white;
+    margin-bottom: 4px;
+  }
+  
+  .quest-date {
+    font-size: 12px;
+    color: #6A6D7B;
+  }
+  
+  .quest-points {
+    color: #C5B3FF;
+    font-weight: 500;
+  }
+  
+  .empty-message {
+    text-align: center;
+    padding: 40px;
+    color: #6A6D7B;
+    background: #1A1D2B;
+    border-radius: 12px;
+    border: 1px solid #2A2D3B;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #2A2D3B;
+    border-top-color: #C5B3FF;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 24px 16px;
+    }
+    
+    .profile-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+      padding: 24px;
+    }
+    
+    .profile-stats {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    
+    .achievements-grid {
+      grid-template-columns: 1fr;
+    }
+  }

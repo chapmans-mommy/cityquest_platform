@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import './ProfilePage.css';
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -27,45 +28,88 @@ const ProfilePage = () => {
     }
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
+  const getRoleName = (role) => {
+    switch(role) {
+      case 'player': return 'Игрок';
+      case 'organizer': return 'Организатор';
+      case 'admin': return 'Администратор';
+      default: return role;
+    }
+  };
+
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h1>Личный кабинет</h1>
-      
-      <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>Информация</h2>
-        <p><strong>Никнейм:</strong> {user.nickname}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Роль:</strong> {user.role === 'player' ? 'Игрок' : user.role === 'organizer' ? 'Организатор' : 'Администратор'}</p>
-        <p><strong>Всего очков:</strong> {user.total_points || 0}</p>
+    <div className="profile-container">
+      <div className="profile-header">
+        <div className="profile-avatar">
+          {user.nickname?.[0]?.toUpperCase() || 'U'}
+        </div>
+        <div className="profile-info">
+          <h1 className="profile-name">{user.nickname}</h1>
+          <p className="profile-email">{user.email}</p>
+          <span className="profile-role">{getRoleName(user.role)}</span>
+        </div>
       </div>
-      
-      <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-        <h2>Достижения</h2>
+
+      <div className="profile-stats">
+        <div className="stat-card">
+          <div className="stat-value">{user.total_points || 0}</div>
+          <div className="stat-label">Всего очков</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{completedQuests.length}</div>
+          <div className="stat-label">Пройдено квестов</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{achievements.length}</div>
+          <div className="stat-label">Достижений</div>
+        </div>
+      </div>
+
+      <div className="profile-section">
+        <h2 className="section-title">Достижения</h2>
         {achievements.length === 0 ? (
-          <p>Пока нет достижений. Проходите квесты, чтобы их получить!</p>
+          <p className="empty-message">Пока нет достижений. Проходите квесты, чтобы их получить!</p>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <div className="achievements-grid">
             {achievements.map(ach => (
-              <div key={ach.id} style={{ background: '#4CAF50', color: 'white', padding: '8px 16px', borderRadius: '20px' }}>
-                {ach.name} +{ach.bonus_points}
+              <div key={ach.id} className="achievement-card">
+                <div className="achievement-icon">🏆</div>
+                <div className="achievement-info">
+                  <div className="achievement-name">{ach.name}</div>
+                  <div className="achievement-desc">{ach.description}</div>
+                  <div className="achievement-points">+{ach.bonus_points} очков</div>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
-      
-      <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
-        <h2>Пройденные квесты</h2>
+
+      <div className="profile-section">
+        <h2 className="section-title">Пройденные квесты</h2>
         {completedQuests.length === 0 ? (
-          <p>Вы ещё не прошли ни одного квеста</p>
+          <p className="empty-message">Вы ещё не прошли ни одного квеста</p>
         ) : (
-          <ul>
-            {completedQuests.map(q => (
-              <li key={q.id}>{q.title} — {q.total_points} очков</li>
+          <div className="completed-quests-list">
+            {completedQuests.map(quest => (
+              <div key={quest.id} className="completed-quest-item">
+                <div className="quest-icon">📍</div>
+                <div className="quest-info">
+                  <div className="quest-name">{quest.title}</div>
+                  <div className="quest-date">
+                    {new Date(quest.completed_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="quest-points">+{quest.total_points} очков</div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>

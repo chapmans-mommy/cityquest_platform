@@ -1,0 +1,236 @@
+.edit-quest-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .edit-quest-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  
+  .back-btn,
+  .preview-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .back-btn {
+    background: none;
+    border: 1px solid #3A3D4B;
+    color: #E0E0E0;
+  }
+  
+  .back-btn:hover {
+    border-color: #C5B3FF;
+    color: #C5B3FF;
+  }
+  
+  .preview-btn {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    color: #C5B3FF;
+  }
+  
+  .preview-btn:hover {
+    border-color: #C5B3FF;
+    background: rgba(197, 179, 255, 0.1);
+  }
+  
+  .edit-quest-card {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .edit-quest-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+  }
+  
+  .quest-status {
+    font-size: 14px;
+    color: #A0A0B0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .publish-btn {
+    background: #FF9800;
+    color: #0B0E17;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .publish-btn:hover {
+    background: #F57C00;
+  }
+  
+  .edit-quest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  
+  .locations-section,
+  .add-location-section {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .empty-locations {
+    text-align: center;
+    padding: 40px;
+    color: #6A6D7B;
+    background: #0F111A;
+    border-radius: 12px;
+  }
+  
+  .sortable-location-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .location-order {
+    color: #C5B3FF;
+    margin-right: 8px;
+  }
+  
+  .location-name {
+    color: white;
+    font-weight: 500;
+  }
+  
+  .delete-location-btn {
+    background: none;
+    border: none;
+    color: #F44336;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .delete-location-btn:hover {
+    background: rgba(244, 67, 54, 0.1);
+  }
+  
+  .location-coords {
+    font-size: 12px;
+    color: #6A6D7B;
+    margin-bottom: 8px;
+  }
+  
+  .drag-handle {
+    font-size: 11px;
+    color: #3A3D4B;
+    text-align: center;
+    padding-top: 8px;
+    border-top: 1px dashed #2A2D3B;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+  }
+  
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    background: #0F111A;
+    border: 1px solid #2A2D3B;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #E0E0E0;
+    font-size: 14px;
+  }
+  
+  .form-input:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: #C5B3FF;
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .add-location-btn {
+    width: 100%;
+    background: #C5B3FF;
+    color: #0B0E17;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+  }
+  
+  .add-location-btn:hover:not(:disabled) {
+    background: #B8A9FF;
+  }
+  
+  .add-location-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .map-section {
+    background: #1A1D2B;
+    border: 1px solid #2A2D3B;
+    border-radius: 16px;
+    padding: 24px;
+  }
+  
+  @media (max-width: 900px) {
+    .edit-quest-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .edit-quest-container {
+      padding: 24px 16px;
+    }
+    
+    .edit-quest-title {
+      font-size: 24px;
+    }
+  }

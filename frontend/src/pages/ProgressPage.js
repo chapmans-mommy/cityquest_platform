@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { questsAPI } from '../services/api';
 import QuestMap from '../components/QuestMap';
+import './ProgressPage.css';
 
 const ProgressPage = () => {
   const { id, progressId } = useParams();
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [nextLocation, setNextLocation] = useState(null);
   const [allLocations, setAllLocations] = useState([]);
-  const [pointsEarned, setPointsEarned] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,6 +17,7 @@ const ProgressPage = () => {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [pauseCount, setPauseCount] = useState(0);
+  const [difficulty, setDifficulty] = useState('easy');
   const startTimeRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
@@ -42,18 +42,12 @@ const ProgressPage = () => {
 
   const loadProgress = async () => {
     try {
-      // Загружаем квест с локациями
       const questRes = await questsAPI.getById(id);
       const locations = questRes.data.locations;
       setAllLocations(locations);
-      
-      // Первая локация (порядок 1)
       const firstLocation = locations.find(l => l.order_number === 1);
       setCurrentLocation(firstLocation);
-      
-      // Запоминаем время старта для таймера
       startTimeRef.current = Date.now();
-      
       setLoading(false);
     } catch (err) {
       console.error('Ошибка загрузки прогресса:', err);
@@ -77,12 +71,10 @@ const ProgressPage = () => {
 
   const handleCheckLocation = async () => {
     if (checking || completed) return;
-    
     setChecking(true);
     try {
       const position = await getCurrentPosition();
       const timeSpent = getTimeSpent();
-      
       const res = await questsAPI.checkLocation(
         progressId,
         currentLocation.id,
@@ -94,18 +86,14 @@ const ProgressPage = () => {
       if (res.data.completed) {
         setCompleted(true);
         setTotalPoints(res.data.totalPoints);
-        alert(`Квест завершён! Получено очков: ${res.data.totalPoints}`);
-        navigate(`/quest/${id}`);
+        setTimeout(() => {
+          navigate(`/quest/${id}`);
+        }, 2000);
       } else {
-        setPointsEarned(res.data.pointsEarned);
         setTotalPoints(res.data.totalPoints);
         setNextLocation(res.data.nextLocation);
-        
-        // Переход к следующей локации
         setCurrentLocation(res.data.nextLocation);
-        startTimeRef.current = Date.now(); // Сброс таймера для новой локации
-        
-        alert(`Отмечено! +${res.data.pointsEarned} очков`);
+        startTimeRef.current = Date.now();
       }
     } catch (err) {
       alert(err.response?.data?.error || 'Ошибка отметки');
@@ -119,7 +107,6 @@ const ProgressPage = () => {
       await questsAPI.pause(progressId);
       setIsPaused(true);
       setPauseCount(prev => prev + 1);
-      alert('Квест поставлен на паузу');
     } catch (err) {
       alert(err.response?.data?.error || 'Ошибка паузы');
     }
@@ -129,7 +116,6 @@ const ProgressPage = () => {
     try {
       await questsAPI.resume(progressId);
       setIsPaused(false);
-      alert('Квест возобновлён');
     } catch (err) {
       alert(err.response?.data?.error || 'Ошибка возобновления');
     }
@@ -146,72 +132,93 @@ const ProgressPage = () => {
     }
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
-  if (completed) return <div style={{ textAlign: 'center', padding: '50px' }}>Квест завершён! Перенаправление...</div>;
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
+  
+  if (completed) return (
+    <div className="completion-screen">
+      <div className="completion-card">
+        <div className="completion-icon">🎉</div>
+        <h2>Квест завершён!</h2>
+        <p>Вы набрали {totalPoints} очков</p>
+        <button onClick={() => navigate(`/quest/${id}`)} className="completion-btn">
+          Вернуться к квесту
+        </button>
+      </div>
+    </div>
+  );
 
   const currentLocationNumber = currentLocation?.order_number || 0;
   const totalLocations = allLocations.length;
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <button 
-        onClick={handleAbort}
-        style={{ marginBottom: '20px', padding: '8px 16px', cursor: 'pointer', backgroundColor: '#ff4444', color: 'white', border: 'none', borderRadius: '4px' }}
-      >
-        Прервать квест
-      </button>
-      
-      <div style={{ background: '#f5f5f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-        <h2>Прогресс: локация {currentLocationNumber} из {totalLocations}</h2>
-        <p>Текущие очки: {totalPoints}</p>
-        {timeLeft !== null && !isPaused && (
-          <p>Осталось времени: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</p>
-        )}
-        {isPaused && <p style={{ color: 'orange' }}>Квест на паузе</p>}
-        <div>
-          <button 
-            onClick={isPaused ? handleResume : handlePause}
-            disabled={pauseCount >= 2}
-            style={{ padding: '8px 16px', marginRight: '10px', cursor: 'pointer' }}
-          >
-            {isPaused ? 'Возобновить' : 'Пауза'} ({pauseCount}/2)
-          </button>
+    <div className="progress-container">
+      <div className="progress-header">
+        <button onClick={handleAbort} className="abort-btn">
+          Прервать квест
+        </button>
+        <div className="progress-stats">
+          <div className="stat-badge">
+            <span className="stat-label">Локация</span>
+            <span className="stat-value">{currentLocationNumber}/{totalLocations}</span>
+          </div>
+          <div className="stat-badge">
+            <span className="stat-label">Очки</span>
+            <span className="stat-value">{totalPoints}</span>
+          </div>
         </div>
       </div>
       
-      <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #ddd' }}>
-        <h3>Текущая локация: {currentLocation?.name}</h3>
-        <p>{currentLocation?.description}</p>
+      <div className="current-location-card">
+        <h2 className="location-name">{currentLocation?.name}</h2>
+        <p className="location-description">{currentLocation?.description}</p>
         {currentLocation?.hint_text && (
-          <p style={{ color: '#666', fontStyle: 'italic' }}>Подсказка: {currentLocation.hint_text}</p>
+          <div className="hint-box">
+            <span className="hint-icon"></span>
+            <span className="hint-text">{currentLocation.hint_text}</span>
+          </div>
         )}
-        <p>Очки за эту локацию: {currentLocation?.points_award}</p>
+        <div className="location-points">
+           {currentLocation?.points_award} очков
+        </div>
       </div>
       
-      <QuestMap locations={allLocations} />
+      <div className="progress-controls">
+        {!isPaused ? (
+          <button 
+            onClick={handlePause}
+            disabled={pauseCount >= 2}
+            className="pause-btn"
+          >
+            ⏸ Пауза ({pauseCount}/2)
+          </button>
+        ) : (
+          <button onClick={handleResume} className="resume-btn">
+            ▶ Возобновить
+          </button>
+        )}
+        <button 
+          onClick={handleCheckLocation}
+          disabled={checking || isPaused}
+          className="checkin-btn"
+        >
+          {checking ? 'Проверка...' : '📍 Отметиться на локации'}
+        </button>
+      </div>
       
-      <button 
-        onClick={handleCheckLocation}
-        disabled={checking || isPaused}
-        style={{
-          marginTop: '20px',
-          padding: '12px 24px',
-          fontSize: '18px',
-          cursor: (checking || isPaused) ? 'not-allowed' : 'pointer',
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          width: '100%'
-        }}
-      >
-        {checking ? 'Проверка...' : 'Отметиться на локации'}
-      </button>
+      <div className="map-container">
+        <h3 className="map-title">Карта маршрута</h3>
+        <QuestMap locations={allLocations} />
+      </div>
       
       {nextLocation && (
-        <div style={{ marginTop: '20px', padding: '15px', background: '#e8f5e9', borderRadius: '8px' }}>
-          <h4>Следующая локация: {nextLocation.name}</h4>
-          <p>{nextLocation.description}</p>
+        <div className="next-location-card">
+          <h4>Следующая локация</h4>
+          <p className="next-location-name">{nextLocation.name}</p>
+          <p className="next-location-desc">{nextLocation.description}</p>
         </div>
       )}
     </div>

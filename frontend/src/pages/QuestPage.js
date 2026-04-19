@@ -4,6 +4,7 @@ import { questsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import QuestMap from '../components/QuestMap';
 import Reviews from '../components/Reviews';
+import './QuestPage.css';
 
 const QuestPage = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const QuestPage = () => {
   const [loading, setLoading] = useState(true);
   const [difficulty, setDifficulty] = useState('easy');
   const [starting, setStarting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadQuest();
@@ -40,87 +42,163 @@ const QuestPage = () => {
     }
   };
 
-  // Проверка, может ли пользователь редактировать квест (автор или админ)
+  const handleDelete = async () => {
+    if (!window.confirm('Вы уверены, что хотите удалить этот квест? Это действие нельзя отменить.')) {
+      return;
+    }
+    
+    setDeleting(true);
+    try {
+      await questsAPI.delete(id);
+      alert('Квест успешно удалён');
+      navigate('/my-quests');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Ошибка удаления квеста');
+      setDeleting(false);
+    }
+  };
+  
+  // Проверка прав ДО использования в JSX
   const canEdit = user && (user.role === 'admin' || (quest && user.id === quest.author_id));
+  const canDelete = user && (user.role === 'admin' || (quest && user.id === quest.author_id));
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
-  if (!quest) return <div style={{ textAlign: 'center', padding: '50px' }}>Квест не найден</div>;
+  const getStatusText = (status) => {
+    switch(status) {
+      case 'published': return 'Опубликован';
+      case 'pending': return 'На модерации';
+      case 'draft': return 'Черновик';
+      case 'rejected': return 'Отклонён';
+      default: return status;
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch(status) {
+      case 'published': return 'status-published';
+      case 'pending': return 'status-pending';
+      case 'draft': return 'status-draft';
+      case 'rejected': return 'status-rejected';
+      default: return '';
+    }
+  };
+
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
+  
+  if (!quest) return (
+    <div className="empty-state">
+      <div className="empty-icon"></div>
+      <p>Квест не найден</p>
+    </div>
+  );
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <button 
-          onClick={() => navigate(-1)}
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
-        >
+    <div className="quest-page-container">
+      <div className="quest-page-header">
+        <button onClick={() => navigate(-1)} className="back-btn">
           ← Назад
         </button>
         
-        {canEdit && (
-          <button 
-            onClick={() => navigate(`/quest/${id}/edit`)}
-            style={{ padding: '8px 16px', backgroundColor: '#ff9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Редактировать
-          </button>
-        )}
-      </div>
-      
-      <h1>{quest.title}</h1>
-      <p style={{ color: '#666', marginBottom: '20px' }}>{quest.description}</p>
-      
-      <div style={{ marginBottom: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '8px' }}>
-        <p><strong>Статус:</strong> {
-          quest.status === 'published' ? 'Опубликован' :
-          quest.status === 'pending' ? 'На модерации' :
-          quest.status === 'draft' ? 'Черновик' : 'Отклонён'
-        }</p>
-        <p><strong>Автор:</strong> {quest.author_name}</p>
-        <p><strong>Локаций:</strong> {quest.locations?.length || 0}</p>
-      </div>
-      
-      <h3>Локации квеста</h3>
-      <QuestMap locations={quest.locations} />
-      
-      {quest.status === 'published' && (
-        <div style={{ marginTop: '30px', padding: '20px', background: '#f5f5f5', borderRadius: '8px' }}>
-          <h3>Начать квест</h3>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ marginRight: '15px' }}>
-              <input
-                type="radio"
-                value="easy"
-                checked={difficulty === 'easy'}
-                onChange={(e) => setDifficulty(e.target.value)}
-              /> Лёгкий
-            </label>
-            <label style={{ marginRight: '15px' }}>
-              <input
-                type="radio"
-                value="medium"
-                checked={difficulty === 'medium'}
-                onChange={(e) => setDifficulty(e.target.value)}
-              /> Средний
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="hard"
-                checked={difficulty === 'hard'}
-                onChange={(e) => setDifficulty(e.target.value)}
-              /> Сложный
-            </label>
-          </div>
-          <button 
-            onClick={handleStart}
-            disabled={starting}
-            style={{ padding: '10px 24px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}
-          >
-            {starting ? 'Запуск...' : 'Начать квест'}
-          </button>
+        <div className="header-actions">
+          {canEdit && (
+            <button onClick={() => navigate(`/quest/${id}/edit`)} className="edit-btn">
+               Редактировать
+            </button>
+          )}
+          {canDelete && (
+            <button onClick={handleDelete} disabled={deleting} className="delete-btn">
+              {deleting ? 'Удаление...' : ' Удалить'}
+            </button>
+          )}
         </div>
-      )}
-      <Reviews questId={id} />
+      </div>
+      
+      <div className="quest-page-content">
+        <h1 className="quest-title">{quest.title}</h1>
+        <p className="quest-description">{quest.description}</p>
+        
+        <div className="quest-info-grid">
+          <div className="info-card">
+            <span className="info-icon"></span>
+            <div className="info-content">
+              <span className="info-label">Статус</span>
+              <span className={`status-badge ${getStatusClass(quest.status)}`}>
+                {getStatusText(quest.status)}
+              </span>
+            </div>
+          </div>
+          
+          <div className="info-card">
+            <span className="info-icon"></span>
+            <div className="info-content">
+              <span className="info-label">Автор</span>
+              <span className="info-value">{quest.author_name}</span>
+            </div>
+          </div>
+          
+          <div className="info-card">
+            <span className="info-icon"></span>
+            <div className="info-content">
+              <span className="info-label">Количество локаций</span> 
+              <span className="info-label"></span>
+              <span className="info-value">{quest.locations?.length || 0}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="map-section">
+          <h2 className="section-title">Карта маршрута</h2>
+          <QuestMap locations={quest.locations} />
+        </div>
+        
+        {quest.status === 'published' && (
+          <div className="start-section">
+            <h2 className="section-title">Начать квест</h2>
+            <div className="difficulty-selector">
+              <label className={`difficulty-option ${difficulty === 'easy' ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  value="easy"
+                  checked={difficulty === 'easy'}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                <span className="difficulty-name">Лёгкий</span>
+                <span className="difficulty-desc">Без таймера</span>
+              </label>
+              
+              <label className={`difficulty-option ${difficulty === 'medium' ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  value="medium"
+                  checked={difficulty === 'medium'}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                <span className="difficulty-name">Средний</span>
+                <span className="difficulty-desc">10 мин на локацию, штраф 50%</span>
+              </label>
+              
+              <label className={`difficulty-option ${difficulty === 'hard' ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  value="hard"
+                  checked={difficulty === 'hard'}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                <span className="difficulty-name">Сложный</span>
+                <span className="difficulty-desc">5 мин на локацию, штраф 100%</span>
+              </label>
+            </div>
+            
+            <button onClick={handleStart} disabled={starting} className="start-btn">
+              {starting ? 'Запуск...' : ' Начать квест'}
+            </button>
+          </div>
+        )}       
+        <Reviews questId={id} />
+      </div>
     </div>
   );
 };

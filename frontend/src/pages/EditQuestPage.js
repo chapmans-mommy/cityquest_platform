@@ -18,8 +18,8 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { questsAPI } from '../services/api';
 import QuestMap from '../components/QuestMap';
+import './EditQuestPage.css';
 
-// Компонент для перетаскиваемой локации
 const SortableLocation = ({ location, onDelete }) => {
   const {
     attributes,
@@ -33,37 +33,30 @@ const SortableLocation = ({ location, onDelete }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    border: '1px solid #ddd',
-    padding: '12px',
-    marginBottom: '10px',
-    borderRadius: '8px',
-    backgroundColor: isDragging ? '#e3f2fd' : 'white',
+    border: '1px solid #2A2D3B',
+    padding: '16px',
+    marginBottom: '12px',
+    borderRadius: '10px',
+    backgroundColor: isDragging ? '#2A2D3B' : '#0F111A',
     cursor: 'grab',
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.6 : 1,
   };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="sortable-location-header">
         <div>
-          <strong>{location.order_number}. {location.name}</strong>
-          <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>
-            {location.latitude}, {location.longitude} | Очки: {location.points_award}
-          </p>
+          <strong className="location-order">{location.order_number}.</strong>
+          <span className="location-name">{location.name}</span>
         </div>
-        <button 
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(location.id);
-          }}
-          style={{ background: '#ff4444', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer' }}
-        >
-          Удалить
+        <button onClick={() => onDelete(location.id)} className="delete-location-btn">
+          ✕
         </button>
       </div>
-      <div style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
-        ⋮⋮⋮ Перетащите для изменения порядка
-      </div>
+      <p className="location-coords">
+        {location.latitude}, {location.longitude} | Очки: {location.points_award}
+      </p>
+      <div className="drag-handle">⋮⋮⋮ Перетащите для изменения порядка</div>
     </div>
   );
 };
@@ -145,7 +138,6 @@ const EditQuestPage = () => {
 
   const handleDeleteLocation = async (locationId) => {
     if (!window.confirm('Удалить эту локацию?')) return;
-    
     try {
       await questsAPI.deleteLocation(locationId);
       await loadQuest();
@@ -156,21 +148,15 @@ const EditQuestPage = () => {
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-    
     if (active.id !== over.id) {
       const oldIndex = locations.findIndex(l => l.id === active.id);
       const newIndex = locations.findIndex(l => l.id === over.id);
       const newLocations = arrayMove(locations, oldIndex, newIndex);
-      
-      // Обновляем order_number для всех локаций
       const updatedLocations = newLocations.map((loc, idx) => ({
         id: loc.id,
         order_number: idx + 1
       }));
-      
       setLocations(newLocations);
-      
-      // Сохраняем новый порядок на сервере
       try {
         await questsAPI.reorderLocations(id, updatedLocations);
       } catch (err) {
@@ -195,40 +181,46 @@ const EditQuestPage = () => {
     }
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
-  if (!quest) return <div style={{ textAlign: 'center', padding: '50px' }}>Квест не найден</div>;
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
+  
+  if (!quest) return <div className="empty-message">Квест не найден</div>;
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <button onClick={() => navigate('/my-quests')} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+    <div className="edit-quest-container">
+      <div className="edit-quest-header">
+        <button onClick={() => navigate('/my-quests')} className="back-btn">
           ← К моим квестам
         </button>
-        <button 
-          onClick={() => navigate(`/quest/${id}`)}
-          style={{ padding: '8px 16px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Просмотр
+        <button onClick={() => navigate(`/quest/${id}`)} className="preview-btn">
+           Просмотр
         </button>
       </div>
       
-      <h1>Редактирование: {quest.title}</h1>
-      <p>Статус: {quest.status === 'draft' ? 'Черновик' : quest.status === 'pending' ? 'На модерации' : quest.status === 'published' ? 'Опубликован' : 'Отклонён'}</p>
+      <div className="edit-quest-card">
+        <h1 className="edit-quest-title">{quest.title}</h1>
+        <div className="quest-status">
+          Статус: 
+          <span className={`status-badge ${quest.status === 'draft' ? 'status-draft' : quest.status === 'pending' ? 'status-pending' : quest.status === 'published' ? 'status-published' : 'status-rejected'}`}>
+            {quest.status === 'draft' ? 'Черновик' : quest.status === 'pending' ? 'На модерации' : quest.status === 'published' ? 'Опубликован' : 'Отклонён'}
+          </span>
+        </div>
+        
+        {quest.status === 'draft' && (
+          <button onClick={handlePublish} className="publish-btn">
+            Отправить на модерацию
+          </button>
+        )}
+      </div>
       
-      {quest.status === 'draft' && (
-        <button 
-          onClick={handlePublish}
-          style={{ marginBottom: '20px', padding: '10px 20px', background: '#ff9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Отправить на модерацию
-        </button>
-      )}
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-        <div>
-          <h2>Локации квеста (перетаскивайте для изменения порядка)</h2>
+      <div className="edit-quest-grid">
+        <div className="locations-section">
+          <h2 className="section-title">Локации квеста</h2>
           {locations.length === 0 ? (
-            <p>Локации не добавлены</p>
+            <p className="empty-locations">Локации не добавлены</p>
           ) : (
             <DndContext
               sensors={sensors}
@@ -251,36 +243,36 @@ const EditQuestPage = () => {
           )}
         </div>
         
-        <div>
-          <h2>Добавить локацию</h2>
+        <div className="add-location-section">
+          <h2 className="section-title">Добавить локацию</h2>
           <form onSubmit={handleAddLocation}>
-            <div style={{ marginBottom: '10px' }}>
+            <div className="form-group">
               <input
                 type="text"
                 placeholder="Название *"
                 value={newLocation.name}
                 onChange={(e) => setNewLocation({...newLocation, name: e.target.value})}
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="form-input"
                 required
               />
             </div>
-            <div style={{ marginBottom: '10px' }}>
+            <div className="form-group">
               <textarea
                 placeholder="Описание"
                 value={newLocation.description}
                 onChange={(e) => setNewLocation({...newLocation, description: e.target.value})}
+                className="form-textarea"
                 rows="2"
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+            <div className="form-row">
               <input
                 type="number"
                 step="any"
                 placeholder="Широта *"
                 value={newLocation.latitude}
                 onChange={(e) => setNewLocation({...newLocation, latitude: e.target.value})}
-                style={{ padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="form-input"
                 required
               />
               <input
@@ -289,41 +281,37 @@ const EditQuestPage = () => {
                 placeholder="Долгота *"
                 value={newLocation.longitude}
                 onChange={(e) => setNewLocation({...newLocation, longitude: e.target.value})}
-                style={{ padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="form-input"
                 required
               />
             </div>
-            <div style={{ marginBottom: '10px' }}>
+            <div className="form-group">
               <input
                 type="number"
                 placeholder="Очки за отметку"
                 value={newLocation.points_award}
                 onChange={(e) => setNewLocation({...newLocation, points_award: e.target.value})}
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="form-input"
               />
             </div>
-            <div style={{ marginBottom: '10px' }}>
+            <div className="form-group">
               <input
                 type="text"
                 placeholder="Подсказка"
                 value={newLocation.hint_text}
                 onChange={(e) => setNewLocation({...newLocation, hint_text: e.target.value})}
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="form-input"
               />
             </div>
-            <button 
-              type="submit" 
-              disabled={saving}
-              style={{ width: '100%', padding: '10px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-            >
-              {saving ? 'Добавление...' : 'Добавить локацию'}
+            <button type="submit" disabled={saving} className="add-location-btn">
+              {saving ? 'Добавление...' : '+ Добавить локацию'}
             </button>
           </form>
         </div>
       </div>
       
-      <div style={{ marginTop: '30px' }}>
-        <h3>Карта квеста</h3>
+      <div className="map-section">
+        <h2 className="section-title">Карта квеста</h2>
         <QuestMap locations={locations} />
       </div>
     </div>

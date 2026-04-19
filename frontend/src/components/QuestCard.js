@@ -1,53 +1,56 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './QuestCard.css';
 
 const QuestCard = ({ quest }) => {
   const navigate = useNavigate();
   
   const renderStars = (rating) => {
     const stars = [];
-    const fullStars = Math.floor(rating);
-    for (let i = 0; i < fullStars; i++) {
-      stars.push('★');
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={i <= (rating || 0) ? 'star-filled' : 'star-empty'}>
+          ★
+        </span>
+      );
     }
-    for (let i = fullStars; i < 5; i++) {
-      stars.push('☆');
-    }
-    return stars.join('');
+    return stars;
   };
 
   return (
-    <div 
-      onClick={() => navigate(`/quest/${quest.id}`)}
-      style={{
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        padding: '16px',
-        marginBottom: '16px',
-        cursor: 'pointer',
-        transition: 'box-shadow 0.2s',
-        backgroundColor: 'white'
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'}
-      onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
-    >
-      {quest.cover_image_url && (
-        <img 
-          src={quest.cover_image_url} 
-          alt={quest.title}
-          style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px', marginBottom: '12px' }}
-        />
-      )}
-      <h3 style={{ margin: '0 0 8px 0' }}>{quest.title}</h3>
-      <p style={{ color: '#666', fontSize: '14px', margin: '0 0 8px 0' }}>
-        {quest.description?.substring(0, 100)}...
-      </p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ color: '#f5a623' }}>{renderStars(quest.avg_rating || 0)}</span>
-        <span style={{ fontSize: '12px', color: '#999' }}> Количество локаций: {quest.locations_count || quest.locations?.length || 0}</span>
+    <div className="quest-card" onClick={() => navigate(`/quest/${quest.id}`)}>
+      <div className="quest-card-image">
+        {quest.cover_image_url ? (
+          <img src={quest.cover_image_url} alt={quest.title} />
+        ) : (
+          <div className="quest-card-image-placeholder">
+            <span></span>
+          </div>
+        )}
+        <div className="quest-card-status">
+          {quest.status === 'published' && <span className="status-badge published">Опубликован</span>}
+          {quest.status === 'pending' && <span className="status-badge pending">На модерации</span>}
+          {quest.status === 'draft' && <span className="status-badge draft">Черновик</span>}
+        </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', color: '#999' }}>Автор: {quest.author_name}</span>
+      
+      <div className="quest-card-content">
+        <h3 className="quest-card-title">{quest.title}</h3>
+        <p className="quest-card-description">
+          {quest.description?.substring(0, 100)}...
+        </p>
+        <div className="quest-card-footer">
+          <div className="quest-card-stats">
+            <span className="stat">
+              <span className="stat-icon"></span>
+              количество локаций: {quest.locations_count || quest.locations?.length || 0}
+            </span>
+            <div className="stars">{renderStars(quest.avg_rating)}</div>
+          </div>
+          <div className="quest-card-author">
+            {quest.author_name}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import './AdminPage.css';
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -52,98 +53,149 @@ const AdminPage = () => {
     }
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <h1>Админ-панель</h1>
+    <div className="admin-container">
+      <h1 className="admin-title">Админ-панель</h1>
       
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>
-        <button onClick={() => setActiveTab('quests')} style={{ padding: '8px 16px', background: activeTab === 'quests' ? '#4CAF50' : '#ddd', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Квесты на модерации</button>
-        <button onClick={() => setActiveTab('users')} style={{ padding: '8px 16px', background: activeTab === 'users' ? '#4CAF50' : '#ddd', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Пользователи</button>
-        <button onClick={() => setActiveTab('logs')} style={{ padding: '8px 16px', background: activeTab === 'logs' ? '#4CAF50' : '#ddd', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Логи аудита</button>
+      <div className="admin-tabs">
+        <button 
+          className={`admin-tab ${activeTab === 'quests' ? 'active' : ''}`}
+          onClick={() => setActiveTab('quests')}
+        >
+          Квесты на модерации
+        </button>
+        <button 
+          className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
+          onClick={() => setActiveTab('users')}
+        >
+          Пользователи
+        </button>
+        <button 
+          className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`}
+          onClick={() => setActiveTab('logs')}
+        >
+          Логи аудита
+        </button>
       </div>
       
       {activeTab === 'quests' && (
-        <div>
-          <h2>Квесты на модерации</h2>
+        <div className="admin-section">
+          <h2 className="section-title">Квесты на модерации</h2>
           {pendingQuests.length === 0 ? (
-            <p>Нет квестов на модерации</p>
+            <p className="empty-message">Нет квестов на модерации</p>
           ) : (
-            pendingQuests.map(quest => (
-              <div key={quest.id} style={{ border: '1px solid #ddd', padding: '16px', marginBottom: '16px', borderRadius: '8px' }}>
-                <h3>{quest.title}</h3>
-                <p>{quest.description}</p>
-                <p><strong>Автор:</strong> {quest.author_name}</p>
-                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                  <button onClick={() => handleModerate(quest.id, 'published')} style={{ padding: '8px 16px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Одобрить</button>
-                  <button onClick={() => handleModerate(quest.id, 'rejected')} style={{ padding: '8px 16px', background: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Отклонить</button>
+            <div className="quests-moderate-list">
+              {pendingQuests.map(quest => (
+                <div key={quest.id} className="moderate-card">
+                  <div className="moderate-card-header">
+                    <h3>{quest.title}</h3>
+                    <span className="quest-author">{quest.author_name}</span>
+                  </div>
+                  <p className="moderate-card-description">{quest.description}</p>
+                  <div className="moderate-card-actions">
+                    <button 
+                      onClick={() => handleModerate(quest.id, 'published')}
+                      className="btn-approve"
+                    >
+                      Одобрить
+                    </button>
+                    <button 
+                      onClick={() => handleModerate(quest.id, 'rejected')}
+                      className="btn-reject"
+                    >
+                      Отклонить
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       )}
       
       {activeTab === 'users' && (
-        <div>
-          <h2>Пользователи</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#ddd' }}>
-                <th style={{ padding: '8px', textAlign: 'left' }}>ID</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Email</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Никнейм</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Роль</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Очки</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '8px' }}>{user.id}</td>
-                  <td style={{ padding: '8px' }}>{user.email}</td>
-                  <td style={{ padding: '8px' }}>{user.nickname}</td>
-                  <td style={{ padding: '8px' }}>{user.role}</td>
-                  <td style={{ padding: '8px' }}>{user.total_points}</td>
-                  <td style={{ padding: '8px' }}>
-                    <select onChange={(e) => handleChangeRole(user.id, e.target.value)} defaultValue={user.role}>
-                      <option value="player">Игрок</option>
-                      <option value="organizer">Организатор</option>
-                      <option value="admin">Админ</option>
-                    </select>
-                  </td>
+        <div className="admin-section">
+          <h2 className="section-title">Пользователи</h2>
+          <div className="users-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Email</th>
+                  <th>Никнейм</th>
+                  <th>Роль</th>
+                  <th>Очки</th>
+                  <th>Действия</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.email}</td>
+                    <td>{user.nickname}</td>
+                    <td>
+                      <span className={`role-badge role-${user.role}`}>
+                        {user.role === 'player' ? 'Игрок' : user.role === 'organizer' ? 'Организатор' : 'Админ'}
+                      </span>
+                    </td>
+                    <td>{user.total_points}</td>
+                    <td>
+                      <select 
+                        onChange={(e) => handleChangeRole(user.id, e.target.value)} 
+                        defaultValue={user.role}
+                        className="role-select"
+                      >
+                        <option value="player">Игрок</option>
+                        <option value="organizer">Организатор</option>
+                        <option value="admin">Админ</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
       
       {activeTab === 'logs' && (
-        <div>
-          <h2>Логи аудита</h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-            <thead>
-              <tr style={{ background: '#ddd' }}>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Время</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Пользователь</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>Действие</th>
-                <th style={{ padding: '8px', textAlign: 'left' }}>IP</th>
-              </tr>
-            </thead>
-            <tbody>
-              {logs.map(log => (
-                <tr key={log.id} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '8px' }}>{new Date(log.created_at).toLocaleString()}</td>
-                  <td style={{ padding: '8px' }}>{log.nickname || 'Гость'}</td>
-                  <td style={{ padding: '8px' }}>{log.action}</td>
-                  <td style={{ padding: '8px' }}>{log.ip_address}</td>
+        <div className="admin-section">
+          <h2 className="section-title">Логи аудита</h2>
+          <div className="logs-table-container">
+            <table className="admin-table logs-table">
+              <thead>
+                <tr>
+                  <th>Время</th>
+                  <th>Пользователь</th>
+                  <th>Действие</th>
+                  <th>IP</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {logs.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="empty-row">Нет логов</td>
+                  </tr>
+                ) : (
+                  logs.map(log => (
+                    <tr key={log.id}>
+                      <td>{new Date(log.created_at).toLocaleString()}</td>
+                      <td>{log.nickname || 'Гость'}</td>
+                      <td className="log-action">{log.action}</td>
+                      <td>{log.ip_address}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
