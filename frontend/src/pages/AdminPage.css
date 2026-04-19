@@ -226,8 +226,36 @@
       font-size: 24px;
     }
     
+    /* Вкладки в одну строку с горизонтальным скроллом */
     .admin-tabs {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      gap: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .admin-tabs::-webkit-scrollbar {
+      height: 3px;
+    }
+    
+    .admin-tabs::-webkit-scrollbar-track {
+      background: #1A1D2B;
+      border-radius: 3px;
+    }
+    
+    .admin-tabs::-webkit-scrollbar-thumb {
+      background: #C5B3FF;
+      border-radius: 3px;
+    }
+    
+    .admin-tab {
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding: 8px 16px;
+      font-size: 13px;
     }
     
     .admin-section {

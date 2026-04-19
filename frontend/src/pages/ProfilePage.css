@@ -363,13 +363,9 @@
     color: #E0E0E0;
   }
   
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
   @media (max-width: 768px) {
     .profile-container {
-      padding: 24px 16px;
+      padding: 24px 10px;
     }
     
     .profile-header {
@@ -380,8 +376,38 @@
     }
     
     .profile-stats {
-      grid-template-columns: 1fr;
-      gap: 12px;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      padding-bottom: 8px;
+    }
+    
+    .profile-stats::-webkit-scrollbar {
+      height: 3px;
+    }
+    
+    .profile-stats::-webkit-scrollbar-track {
+      background: #1A1D2B;
+      border-radius: 3px;
+    }
+    
+    .profile-stats::-webkit-scrollbar-thumb {
+      background: #C5B3FF;
+      border-radius: 3px;
+    }
+    
+    .stat-card {
+      flex-shrink: 0;
+      min-width: 110px;
+      padding: 16px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
     }
     
     .achievements-grid {

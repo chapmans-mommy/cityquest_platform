@@ -100,7 +100,8 @@
     color: #C5B3FF;
   }
   
-  @media (max-width: 1024px) {
+  /* Планшеты и маленькие ноутбуки */
+@media (max-width: 1024px) {
     .navbar-center {
       position: static;
       transform: none;
@@ -108,55 +109,100 @@
     }
   }
   
-  @media (max-width: 900px) {
+  /* Мобильные устройства — перестраиваем на две строки */
+  @media (max-width: 768px) {
     .navbar-container {
       flex-wrap: wrap;
+      padding: 10px 16px;
       gap: 12px;
     }
     
+    /* Первая строка: логотип слева, ник и выход справа */
     .navbar-logo {
       order: 1;
+      font-size: 20px;
     }
     
     .navbar-right {
       order: 2;
+      gap: 12px;
     }
     
+    .nav-username {
+      font-size: 13px;
+    }
+    
+    .nav-logout {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    
+    /* Вторая строка: навигационные ссылки с горизонтальным скроллом */
     .navbar-center {
-      order: 3;
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .navbar-container {
-      flex-direction: column;
-      align-items: stretch;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        padding-bottom: 4px;
+      }
+    
+    .navbar-center::-webkit-scrollbar {
+      height: 3px;
     }
     
-    .navbar-logo {
-      text-align: center;
+    .navbar-center::-webkit-scrollbar-track {
+      background: #1A1D2B;
+      border-radius: 3px;
     }
     
-    .navbar-right {
-      justify-content: center;
+    .navbar-center::-webkit-scrollbar-thumb {
+      background: #C5B3FF;
+      border-radius: 3px;
     }
     
-    .navbar-center {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-    }
-    
-    .navbar-center .nav-link {
-      text-align: center;
-      padding: 8px;
+    .nav-link {
+      font-size: 14px;
     }
     
     .nav-link-primary {
-      text-align: center;
+      padding: 4px 12px;
+    }
+  }
+  
+  /* Очень маленькие телефоны (до 480px) */
+  @media (max-width: 480px) {
+    .navbar-container {
+      padding: 8px 12px;
+      gap: 10px;
+    }
+    
+    .navbar-logo {
+      font-size: 18px;
+    }
+    
+    .nav-username {
+      font-size: 11px;
+    }
+    
+    .nav-logout {
+      padding: 3px 8px;
+      font-size: 11px;
+    }
+    
+    .navbar-center {
+      gap: 14px;
+    }
+    
+    .nav-link {
+      font-size: 12px;
+    }
+    
+    .nav-link-primary {
+      padding: 3px 10px;
     }
   }
