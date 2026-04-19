@@ -17,12 +17,7 @@ const HomePage = () => {
 
   const loadQuests = async () => {
     try {
-      let res;
-      if (user && (user.role === 'admin' || user.role === 'organizer')) {
-        res = await questsAPI.getMyQuests();
-      } else {
-        res = await questsAPI.getAll();
-      }
+      const res = await questsAPI.getAll();
       setQuests(res.data);
     } catch (err) {
       console.error('Ошибка загрузки квестов:', err);
@@ -46,7 +41,7 @@ const HomePage = () => {
         <div className="container">
           <div className="quests-header">
             <h2 className="section-title">
-              {isAdminOrOrganizer ? 'Мои квесты' : 'Доступные квесты'}
+              {isAdminOrOrganizer ? 'Доступные квесты' : 'Доступные квесты'}
             </h2>
             <input
               type="text"

@@ -35,6 +35,7 @@ export const questsAPI = {
     publish: (questId) => api.post(`/quests/${questId}/publish`),
     reorderLocations: (questId, locations) => api.put(`/quests/${questId}/locations/reorder`, { locations }),
     delete: (id) => api.delete(`/quests/${id}`),
+    update: (id, data) => api.put(`/quests/${id}`, data),
 };
 
 export const leaderboardAPI = {

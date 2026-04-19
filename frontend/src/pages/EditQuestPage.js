@@ -17,6 +17,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { questsAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import QuestMap from '../components/QuestMap';
 import './EditQuestPage.css';
 
@@ -64,10 +65,17 @@ const SortableLocation = ({ location, onDelete }) => {
 const EditQuestPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [quest, setQuest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingInfo, setSavingInfo] = useState(false);
   const [locations, setLocations] = useState([]);
+  
+  // Форма для редактирования основной информации
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [coverImageUrl, setCoverImageUrl] = useState('');
   
   const [newLocation, setNewLocation] = useState({
     name: '',
@@ -94,11 +102,32 @@ const EditQuestPage = () => {
       const res = await questsAPI.getById(id);
       setQuest(res.data);
       setLocations(res.data.locations || []);
+      setTitle(res.data.title || '');
+      setDescription(res.data.description || '');
+      setCoverImageUrl(res.data.cover_image_url || '');
     } catch (err) {
       console.error('Ошибка загрузки квеста:', err);
       navigate('/my-quests');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Сохранение основной информации
+  const handleSaveInfo = async () => {
+    setSavingInfo(true);
+    try {
+      await questsAPI.update(id, {
+        title,
+        description,
+        cover_image_url: coverImageUrl
+      });
+      alert('Информация о квесте сохранена');
+      await loadQuest();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Ошибка сохранения');
+    } finally {
+      setSavingInfo(false);
     }
   };
 
@@ -181,6 +210,10 @@ const EditQuestPage = () => {
     }
   };
 
+  // Проверка прав на редактирование (админ может редактировать любые квесты)
+  const canEdit = user && (user.role === 'admin' || (quest && user.id === quest.author_id));
+  const isPublished = quest?.status === 'published';
+
   if (loading) return (
     <div className="loading-container">
       <div className="loading-spinner"></div>
@@ -188,6 +221,7 @@ const EditQuestPage = () => {
   );
   
   if (!quest) return <div className="empty-message">Квест не найден</div>;
+  if (!canEdit) return <div className="empty-message">У вас нет прав на редактирование этого квеста</div>;
 
   return (
     <div className="edit-quest-container">
@@ -196,26 +230,72 @@ const EditQuestPage = () => {
           ← К моим квестам
         </button>
         <button onClick={() => navigate(`/quest/${id}`)} className="preview-btn">
-           Просмотр
+          Просмотр
         </button>
       </div>
       
-      <div className="edit-quest-card">
-        <h1 className="edit-quest-title">{quest.title}</h1>
-        <div className="quest-status">
-          Статус: 
+      {/* Основная информация */}
+      <div className="edit-info-section">
+        <div className="section-header">
+          <h2 className="section-title">Основная информация</h2>
+          <button onClick={handleSaveInfo} disabled={savingInfo} className="save-info-btn">
+            {savingInfo ? 'Сохранение...' : ' Сохранить изменения'}
+          </button>
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">Название квеста</label>
+          <input
+            type="text"
+            className="form-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">Описание</label>
+          <textarea
+            className="form-textarea"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows="4"
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="form-label">Ссылка на обложку</label>
+          <input
+            type="url"
+            className="form-input"
+            value={coverImageUrl}
+            onChange={(e) => setCoverImageUrl(e.target.value)}
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+        
+        {coverImageUrl && (
+          <div className="cover-preview">
+            <img src={coverImageUrl} alt="Обложка квеста" />
+          </div>
+        )}
+        
+        <div className="quest-status-info">
           <span className={`status-badge ${quest.status === 'draft' ? 'status-draft' : quest.status === 'pending' ? 'status-pending' : quest.status === 'published' ? 'status-published' : 'status-rejected'}`}>
             {quest.status === 'draft' ? 'Черновик' : quest.status === 'pending' ? 'На модерации' : quest.status === 'published' ? 'Опубликован' : 'Отклонён'}
           </span>
+          {quest.status === 'draft' && (
+            <button onClick={handlePublish} className="publish-btn">
+              Отправить на модерацию
+            </button>
+          )}
+          {isPublished && user.role === 'admin' && (
+            <div className="admin-note">ⓘ Администратор может редактировать опубликованный квест</div>
+          )}
         </div>
-        
-        {quest.status === 'draft' && (
-          <button onClick={handlePublish} className="publish-btn">
-            Отправить на модерацию
-          </button>
-        )}
       </div>
       
+      {/* Локации */}
       <div className="edit-quest-grid">
         <div className="locations-section">
           <h2 className="section-title">Локации квеста</h2>

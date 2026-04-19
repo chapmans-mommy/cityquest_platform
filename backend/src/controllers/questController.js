@@ -66,14 +66,25 @@ const createQuest = async (req, res) => {
 const updateQuest = async (req, res) => {
   try {
     const { id } = req.params;
+    const { title, description, cover_image_url, max_concurrent_players } = req.body;
+    
     const existingQuest = await Quest.findById(parseInt(id));
     if (!existingQuest) {
       return res.status(404).json({ error: 'Квест не найден' });
     }
+    
+    // Админ может редактировать любые квесты
     if (existingQuest.author_id !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Нет прав на редактирование' });
     }
-    const updatedQuest = await Quest.update(parseInt(id), req.body);
+    
+    const updatedQuest = await Quest.update(parseInt(id), {
+      title,
+      description,
+      cover_image_url,
+      max_concurrent_players
+    });
+    
     res.json(updatedQuest);
   } catch (err) {
     console.error(err);

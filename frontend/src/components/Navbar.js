@@ -19,38 +19,37 @@ const Navbar = () => {
           City<span>Quest</span>
         </Link>
         
-        <div className="navbar-links">
-          {user ? (
+        <div className="navbar-center">
+          {user && (
             <>
               <Link to="/" className="nav-link">Главная</Link>
               <Link to="/profile" className="nav-link">Профиль</Link>
               <Link to="/leaderboard" className="nav-link">Рейтинг</Link>
               
-              {user.role === 'organizer' && (
-                <>
-                  <Link to="/my-quests" className="nav-link">Мои квесты</Link>
-                  <Link to="/create-quest" className="nav-link nav-link-primary">+ Создать</Link>
-                </>
+              {(user.role === 'organizer' || user.role === 'admin') && (
+                <Link to="/my-quests" className="nav-link">Мои квесты</Link>
               )}
+              
+              {(user.role === 'organizer' || user.role === 'admin')}
               
               {user.role === 'admin' && (
-                <>
-                  <Link to="/my-quests" className="nav-link">Мои квесты</Link>
-                  <Link to="/create-quest" className="nav-link nav-link-primary">+ Создать</Link>
-                  <Link to="/admin" className="nav-link">Админ</Link>
-                </>
+                <Link to="/admin" className="nav-link">Админ</Link>
               )}
-              
-              <div className="nav-user">
-                <span className="nav-username">{user.nickname}</span>
-                <button onClick={handleLogout} className="nav-logout">Выйти</button>
-              </div>
+            </>
+          )}
+        </div>
+        
+        <div className="navbar-right">
+          {user ? (
+            <>
+              <span className="nav-username">{user.nickname}</span>
+              <button onClick={handleLogout} className="nav-logout">Выйти</button>
             </>
           ) : (
-            <>
+            <div className="nav-auth">
               <Link to="/login" className="nav-link">Войти</Link>
               <Link to="/register" className="nav-link nav-link-primary">Регистрация</Link>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -4,10 +4,14 @@ import api from '../services/api';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [achievements, setAchievements] = useState([]);
   const [completedQuests, setCompletedQuests] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Для аватарки
+  const [editingAvatar, setEditingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
 
   useEffect(() => {
     loadUserData();
@@ -25,6 +29,19 @@ const ProfilePage = () => {
       console.error('Ошибка загрузки данных:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateAvatar = async () => {
+    try {
+      await api.put('/user/avatar', { avatar_url: avatarUrl });
+      if (updateUser) {
+        updateUser({ ...user, avatar_url: avatarUrl });
+      }
+      setEditingAvatar(false);
+      alert('Аватар обновлён');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Ошибка обновления аватара');
     }
   };
 
@@ -46,8 +63,13 @@ const ProfilePage = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <div className="profile-avatar">
-          {user.nickname?.[0]?.toUpperCase() || 'U'}
+        <div className="profile-avatar" onClick={() => setEditingAvatar(true)} style={{ cursor: 'pointer' }}>
+          {user.avatar_url ? (
+            <img src={user.avatar_url} alt="Аватар" />
+          ) : (
+            user.nickname?.[0]?.toUpperCase() || 'U'
+          )}
+          <div className="avatar-edit-hint">✏️</div>
         </div>
         <div className="profile-info">
           <h1 className="profile-name">{user.nickname}</h1>
@@ -79,7 +101,7 @@ const ProfilePage = () => {
           <div className="achievements-grid">
             {achievements.map(ach => (
               <div key={ach.id} className="achievement-card">
-                <div className="achievement-icon">🏆</div>
+                <div className="achievement-icon"></div>
                 <div className="achievement-info">
                   <div className="achievement-name">{ach.name}</div>
                   <div className="achievement-desc">{ach.description}</div>
@@ -99,7 +121,7 @@ const ProfilePage = () => {
           <div className="completed-quests-list">
             {completedQuests.map(quest => (
               <div key={quest.id} className="completed-quest-item">
-                <div className="quest-icon">📍</div>
+                <div className="quest-icon"></div>
                 <div className="quest-info">
                   <div className="quest-name">{quest.title}</div>
                   <div className="quest-date">
@@ -112,6 +134,26 @@ const ProfilePage = () => {
           </div>
         )}
       </div>
+
+      {/* Модальное окно для редактирования аватара */}
+      {editingAvatar && (
+        <div className="avatar-modal" onClick={() => setEditingAvatar(false)}>
+          <div className="avatar-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Изменить аватар</h3>
+            <input
+              type="url"
+              className="form-input"
+              value={avatarUrl}
+              onChange={(e) => setAvatarUrl(e.target.value)}
+              placeholder="Ссылка на изображение"
+            />
+            <div className="modal-actions">
+              <button onClick={updateAvatar}>Сохранить</button>
+              <button onClick={() => setEditingAvatar(false)}>Отмена</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

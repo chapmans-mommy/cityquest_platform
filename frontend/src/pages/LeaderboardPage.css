@@ -1,133 +1,284 @@
 .leaderboard-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
-  
-  .leaderboard-header {
-    margin-bottom: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.leaderboard-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.leaderboard-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.leaderboard-subtitle {
+  font-size: 16px;
+  color: #A0A0B0;
+}
+
+.leaderboard-card {
+  background: #1A1D2B;
+  border: 1px solid #2A2D3B;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.leaderboard-header {
+  padding: 24px;
+  border-bottom: 1px solid #2A2D3B;
+  background: #0F111A;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  background: none;
+  border: 1px solid #2A2D3B;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #A0A0B0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  border-color: #C5B3FF;
+  color: #C5B3FF;
+}
+
+.tab-btn.active {
+  background: #C5B3FF;
+  border-color: #C5B3FF;
+  color: #0B0E17;
+}
+
+.leaderboard-info {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.info-badge {
+  background: rgba(197, 179, 255, 0.15);
+  color: #C5B3FF;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.info-text {
+  font-size: 13px;
+  color: #6A6D7B;
+}
+
+.leaderboard-table-container {
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table thead tr {
+  background: #1A1D2B;
+}
+
+.leaderboard-table th {
+  /* text-align: center; */
+  padding: 16px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6A6D7B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard-table th:first-child {
+  text-align: center;
+  width: 20vh;
+}
+
+.leaderboard-table th:nth-child(2) {
+  text-align: center;
+  width: 50vh;
+}
+
+.leaderboard-table th:nth-child(3) {
+  text-align: center;
+  width: 70vh;
+}
+
+.leaderboard-table th:nth-child(4) {
+  text-align: center;
+  width: 120px;
+}
+
+
+
+.leaderboard-table td {
+  padding: 16px 20px;
+  font-size: 15px;
+  color: #E0E0E0;
+  border-bottom: 1px solid #2A2D3B;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-table tbody tr:hover {
+  background: #1F2232;
+}
+
+.top-player {
+  background: rgba(197, 179, 255, 0.03);
+}
+
+.rank-cell {
+  width: 80px;
+}
+
+.medal {
+  font-size: 24px;
+}
+
+.rank-number {
+  font-weight: 600;
+  color: #6A6D7B;
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #C5B3FF, #9B87E0);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #0B0E17;
+}
+
+.player-name {
+  font-weight: 500;
+}
+
+.points-cell {
+  text-align: center;
+}
+
+.points-value {
+  font-weight: 700;
+  color: #C5B3FF;
+  font-size: 18px;
+}
+
+.status-cell {
+  text-align: right;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-badge.champion {
+  background: linear-gradient(135deg, #ffd90085, #ffa60078);
+  color: #0B0E17;
+}
+
+.status-badge.contender {
+  background: linear-gradient(135deg, #c0c0c074, #a0a0a072);
+  color: #0B0E17;
+}
+
+.status-badge.rising {
+  background: linear-gradient(135deg, #cd803284, #b8733388);
+  color: #0B0E17;
+}
+
+.status-badge.player {
+  background: #2A2D3B;
+  color: #A0A0B0;
+}
+
+.empty-leaderboard {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-leaderboard p {
+  font-size: 18px;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.empty-leaderboard span {
+  font-size: 14px;
+  color: #6A6D7B;
+}
+
+@media (max-width: 768px) {
+  .leaderboard-container {
+    padding: 24px 16px;
   }
   
   .leaderboard-title {
-    font-size: 32px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 24px;
-    letter-spacing: -0.5px;
+    font-size: 28px;
   }
   
-  .tab-buttons {
-    display: flex;
-    gap: 12px;
-  }
-  
-  .tab-btn {
-    background: #1A1D2B;
-    border: 1px solid #2A2D3B;
-    padding: 10px 24px;
-    border-radius: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #A0A0B0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .tab-btn:hover {
-    border-color: #C5B3FF;
-    color: #C5B3FF;
-  }
-  
-  .tab-btn.active {
-    background: #C5B3FF;
-    border-color: #C5B3FF;
-    color: #0B0E17;
-  }
-  
-  .leaderboard-table-container {
-    background: #1A1D2B;
-    border: 1px solid #2A2D3B;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  
-  .leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .leaderboard-table thead tr {
-    background: #0F111A;
-    border-bottom: 1px solid #2A2D3B;
-  }
-  
-  .leaderboard-table th {
-    text-align: left;
-    padding: 16px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #C5B3FF;
-    letter-spacing: 0.5px;
-  }
-  
+  .leaderboard-table th,
   .leaderboard-table td {
-    padding: 14px 20px;
-    font-size: 15px;
-    color: #E0E0E0;
-    border-bottom: 1px solid #2A2D3B;
-  }
-  
-  .leaderboard-table tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .leaderboard-table tbody tr:hover {
-    background: #1F2232;
+    padding: 12px 12px;
+    font-size: 13px;
   }
   
   .rank-cell {
-    font-weight: 600;
-    width: 80px;
+    width: 60px;
   }
   
-  .player-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .points-value {
+    font-size: 14px;
   }
   
-  .player-name {
-    font-weight: 500;
+  .player-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
   
-  .points-cell {
-    text-align: right;
-    font-weight: 600;
-    color: #C5B3FF;
+  .status-badge {
+    padding: 2px 8px;
+    font-size: 9px;
   }
-  
-  .empty-row {
-    text-align: center;
-    padding: 40px;
-    color: #6A6D7B;
-  }
-  
-  @media (max-width: 768px) {
-    .leaderboard-container {
-      padding: 24px 16px;
-    }
-    
-    .leaderboard-title {
-      font-size: 24px;
-    }
-    
-    .leaderboard-table th,
-    .leaderboard-table td {
-      padding: 12px 12px;
-      font-size: 13px;
-    }
-    
-    .rank-cell {
-      width: 60px;
-    }
-  }
+}
