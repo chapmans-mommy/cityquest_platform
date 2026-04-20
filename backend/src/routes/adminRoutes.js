@@ -130,4 +130,63 @@ router.post('/quests/:id/moderate', protect, restrictTo('admin'), async (req, re
   }
 });
 
+/**
+ * GET /api/admin/active-users
+ * @summary Получить список квестов с активными пользователями
+ * @tags Admin
+ * @security BearerAuth
+ * @return {array<object>} 200 - массив квестов с активными игроками
+ */
+router.get('/active-users', protect, restrictTo('admin'), async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        q.id as quest_id,
+        q.title as quest_title,
+        json_agg(json_build_object(
+          'user_id', u.id,
+          'nickname', u.nickname,
+          'progress_id', p.id,
+          'started_at', p.started_at
+        )) as active_players
+      FROM player_progress p
+      JOIN quests q ON p.quest_id = q.id
+      JOIN users u ON p.user_id = u.id
+      WHERE p.status = 'in_progress'
+      GROUP BY q.id, q.title
+    `;
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+/**
+ * DELETE /api/admin/kick-user
+ * @summary Удалить пользователя из активного квеста
+ * @tags Admin
+ * @security BearerAuth
+ * @param {object} request.body.required
+ * @param {number} request.body.progressId.required - ID прогресса
+ * @return {object} 200 - сообщение об удалении
+ */
+router.delete('/kick-user', protect, restrictTo('admin'), async (req, res) => {
+  try {
+    const { progressId } = req.body;
+    
+    // Обновляем статус прогресса на 'aborted'
+    await pool.query(
+      'UPDATE player_progress SET status = $1 WHERE id = $2',
+      ['kicked_by_admin', progressId]
+    );
+    
+    res.json({ message: 'Пользователь удалён из квеста' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
 module.exports = router;

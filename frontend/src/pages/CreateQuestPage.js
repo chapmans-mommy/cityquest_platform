@@ -68,7 +68,7 @@ const CreateQuestPage = () => {
               className="form-input"
               value={coverImageUrl}
               onChange={(e) => setCoverImageUrl(e.target.value)}
-              placeholder="https://example.com/image.jpg"
+              placeholder="Cсылка https"
             />
           </div>
           

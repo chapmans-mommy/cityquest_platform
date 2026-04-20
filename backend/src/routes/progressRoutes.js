@@ -139,6 +139,134 @@ router.put('/user/avatar', protect, async (req, res) => {
     }
   });
 
+  /**
+ * POST /api/user/request-role-upgrade
+ * @summary Отправить запрос на повышение роли до организатора
+ * @tags User
+ * @security BearerAuth
+ * @return {object} 200 - сообщение об отправке
+ */
+router.post('/user/request-role-upgrade', protect, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      
+      // Проверяем, нет ли уже pending запроса
+      const checkQuery = `
+        SELECT * FROM role_requests 
+        WHERE user_id = $1 AND status = 'pending'
+      `;
+      const checkResult = await pool.query(checkQuery, [userId]);
+      
+      if (checkResult.rows.length > 0) {
+        return res.status(400).json({ error: 'Запрос уже отправлен' });
+      }
+      
+      // Создаём таблицу для запросов, если её нет
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS role_requests (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          status VARCHAR(20) DEFAULT 'pending',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          resolved_at TIMESTAMP
+        )
+      `);
+      
+      await pool.query(
+        'INSERT INTO role_requests (user_id) VALUES ($1)',
+        [userId]
+      );
+      
+      res.json({ message: 'Запрос отправлен администратору' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  /**
+   * GET /api/admin/role-requests
+   * @summary Получить все запросы на смену роли
+   * @tags Admin
+   * @security BearerAuth
+   */
+  router.get('/admin/role-requests', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      const query = `
+        SELECT rr.*, u.nickname, u.email
+        FROM role_requests rr
+        JOIN users u ON rr.user_id = u.id
+        WHERE rr.status = 'pending'
+        ORDER BY rr.created_at ASC
+      `;
+      const result = await pool.query(query);
+      res.json(result.rows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  /**
+   * POST /api/admin/role-requests/:id/approve
+   * @summary Одобрить запрос на смену роли
+   * @tags Admin
+   * @security BearerAuth
+   */
+  router.post('/admin/role-requests/:id/approve', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Получаем запрос
+      const requestResult = await pool.query(
+        'SELECT user_id FROM role_requests WHERE id = $1',
+        [id]
+      );
+      
+      if (requestResult.rows.length === 0) {
+        return res.status(404).json({ error: 'Запрос не найден' });
+      }
+      
+      const userId = requestResult.rows[0].user_id;
+      
+      // Меняем роль пользователя
+      await pool.query(
+        'UPDATE users SET role = $1 WHERE id = $2',
+        ['organizer', userId]
+      );
+      
+      // Обновляем статус запроса
+      await pool.query(
+        'UPDATE role_requests SET status = $1, resolved_at = NOW() WHERE id = $2',
+        ['approved', id]
+      );
+      
+      res.json({ message: 'Роль пользователя изменена на организатора' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+  
+  /**
+   * POST /api/admin/role-requests/:id/reject
+   * @summary Отклонить запрос на смену роли
+   * @tags Admin
+   * @security BearerAuth
+   */
+  router.post('/admin/role-requests/:id/reject', protect, restrictTo('admin'), async (req, res) => {
+    try {
+      await pool.query(
+        'UPDATE role_requests SET status = $1, resolved_at = NOW() WHERE id = $2',
+        ['rejected', req.params.id]
+      );
+      res.json({ message: 'Запрос отклонён' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Ошибка сервера' });
+    }
+  });
+
 // Пользователь отправляет запрос на ручную отметку
 router.post('/progress/:progressId/request-manual-check', protect, async (req, res) => {
     try {

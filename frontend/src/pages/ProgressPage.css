@@ -275,7 +275,34 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
-
+  
+  .profile-role-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .request-role-btn {
+    background: none;
+    border: 1px solid #C5B3FF;
+    color: #C5B3FF;
+    padding: 6px 14px;
+    margin-left: 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .request-role-btn:hover {
+    background: rgba(197, 179, 255, 0.1);
+  }
+  
+  .request-role-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   
   @media (max-width: 768px) {
     .progress-container {

@@ -46,6 +46,7 @@ export const leaderboardAPI = {
 export const userAPI = {
     getAchievements: () => api.get('/user/achievements'),
     getCompletedQuests: () => api.get('/user/completed-quests'),
+    requestRoleUpgrade: () => api.post('/user/request-role-upgrade'),
   };
 
   export const adminAPI = {
@@ -57,6 +58,11 @@ export const userAPI = {
     getManualRequests: () => api.get('/admin/manual-requests'),
     approveRequest: (id) => api.post(`/admin/manual-requests/${id}/approve`),
     rejectRequest: (id) => api.post(`/admin/manual-requests/${id}/reject`),
+    getActiveUsers: () => api.get('/admin/active-users'),
+    kickUser: (progressId) => api.delete('/admin/kick-user', { data: { progressId } }),
+    getRoleRequests: () => api.get('/admin/role-requests'),
+    approveRoleRequest: (id) => api.post(`/admin/role-requests/${id}/approve`),
+    rejectRoleRequest: (id) => api.post(`/admin/role-requests/${id}/reject`),
   };
 
   export const progressAPI = {

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import './AdminPage.css';
 import AdminManualRequests from '../components/AdminManualRequests';
+import { useNavigate } from 'react-router-dom';
+import ActiveUsers from '../components/ActiveUsers';
+import RoleRequests from '../components/RoleRequests';
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -9,6 +12,7 @@ const AdminPage = () => {
   const [pendingQuests, setPendingQuests] = useState([]);
   const [activeTab, setActiveTab] = useState('quests');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadData();
@@ -84,6 +88,18 @@ const AdminPage = () => {
           Пользователи
         </button>
         <button 
+        className={`admin-tab ${activeTab === 'active' ? 'active' : ''}`}
+        onClick={() => setActiveTab('active')}
+        >
+         Активные
+        </button>
+        <button 
+        className={`admin-tab ${activeTab === 'roles' ? 'active' : ''}`}
+        onClick={() => setActiveTab('roles')}
+        >
+        Запросы на роль
+        </button>
+        <button 
           className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`}
           onClick={() => setActiveTab('logs')}
         >
@@ -106,6 +122,12 @@ const AdminPage = () => {
                   </div>
                   <p className="moderate-card-description">{quest.description}</p>
                   <div className="moderate-card-actions">
+                  <button 
+                        onClick={() => navigate(`/quest/${quest.id}`)}
+                        className="btn-view"
+                    >
+                    Просмотр
+                    </button>
                     <button 
                       onClick={() => handleModerate(quest.id, 'published')}
                       className="btn-approve"
@@ -179,6 +201,20 @@ const AdminPage = () => {
         </div>
       )}
       
+      {activeTab === 'active' && (
+        <div className="admin-section">
+            <h2 className="section-title">Активные пользователи</h2>
+            <ActiveUsers />
+        </div>
+        )}
+      
+      {activeTab === 'roles' && (
+        <div className="admin-section">
+            <h2 className="section-title">Запросы на роль организатора</h2>
+            <RoleRequests />
+        </div>
+        )}
+
       {activeTab === 'logs' && (
         <div className="admin-section">
           <h2 className="section-title">Логи аудита</h2>

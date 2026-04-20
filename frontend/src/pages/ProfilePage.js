@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './ProfilePage.css';
+import { userAPI } from '../services/api';
 
 const ProfilePage = () => {
   const { user, updateUser } = useAuth();
@@ -54,6 +55,19 @@ const ProfilePage = () => {
     }
   };
 
+  const [requestSent, setRequestSent] = useState(false);
+
+    const handleRequestRoleUpgrade = async () => {
+    if (requestSent) return;
+    try {
+        await userAPI.requestRoleUpgrade();
+        setRequestSent(true);
+        alert('Запрос отправлен администратору');
+    } catch (err) {
+        alert(err.response?.data?.error || 'Ошибка отправки запроса');
+    }
+    };
+
   if (loading) return (
     <div className="loading-container">
       <div className="loading-spinner"></div>
@@ -75,6 +89,11 @@ const ProfilePage = () => {
           <h1 className="profile-name">{user.nickname}</h1>
           <p className="profile-email">{user.email}</p>
           <span className="profile-role">{getRoleName(user.role)}</span>
+            {user.role === 'player' && (
+                <button onClick={handleRequestRoleUpgrade} className="request-role-btn">
+                Стать организатором
+                </button>
+            )}
         </div>
       </div>
 

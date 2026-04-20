@@ -216,6 +216,21 @@
     padding: 40px;
     color: #6A6D7B;
   }
+  .btn-view {
+    background: #C5B3FF;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  
+  .btn-view:hover {
+    opacity: 0.85;
+  }
   
   @media (max-width: 768px) {
     .admin-container {
